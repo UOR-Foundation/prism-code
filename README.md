@@ -1,36 +1,83 @@
-# UOR project template
+# prism-code
 
-Shared repository policy for projects consuming PrismPM as an SDK. No
-application or organizational model is included.
+prism-code checks a Prism dataflow project script against its declared memory
+and PII-encryption policies, and emits the project's canonical form. It is a
+Prism application: its behavior is authored once in LexLean (`src/*.lex.tex`)
+and PrismPM generates the verified browser application (GitHub Pages) and the
+command-line interface from that single model. No application behavior is
+written by hand outside the model.
 
-## Create a repository
+## Status
 
-1. Create a GitHub repository from this template and clone it.
-2. Set `workspace.package.repository` and `homepage` in `Cargo.toml`.
-3. Replace this README with the project's name, purpose, and current status.
-4. Keep the claim and authority registers empty until capabilities are defined.
-   Follow [AGENTS.md](AGENTS.md) when adding them.
+Development, version 0.1.0. The authoritative model is committed; the SDK
+binding, generated artifacts, CLI, and Pages deployment are not yet in place.
+The work is tracked in the prism-code GitHub project and its milestones.
 
-## SDK status
+The model was imported as `prism-coder`. Its product identifiers (`prism-coder`,
+`PrismCoder`, the `prism-coder/1` script header, and the repository and Pages
+URLs) are renamed to `prism-code` through the LexLean toolchain, not by hand,
+because the application model digest and lock bind those bytes.
 
-This template is not yet bound to a public SDK release. `prismpm.lock` and
-`template.lock` are absent; the devcontainer and complete `just vv` gate require
-those immutable bindings. Creating and naming a repository does
-not require selecting its model, standards, views, or deployment targets.
+## What it does
 
-Once bound, open the repository in its digest-pinned devcontainer and run
-`just vv`. The host needs only Git, Docker with Buildx, and a devcontainer
-client. Do not substitute a vendored PrismPM checkout or host toolchain.
+A request is UTF-8 text of at most 4096 bytes. The first line is the header
+`prism-coder/1`; each further non-empty line is one statement:
 
-## Repository boundary
+| Statement | Meaning |
+| --- | --- |
+| `node NAME KIND MEMORY` | a node of kind `input`, `operator`, `encrypt`, or `output` with a memory requirement in bytes |
+| `edge SOURCE TARGET` | a dataflow edge between two declared nodes |
+| `pii NAME` | marks an input node as carrying personal data |
+| `policy memory LIMIT` | no node may require more than `LIMIT` bytes |
+| `policy encrypt-pii` | personal data must pass through an `encrypt` node before any `output` |
 
-- `model/`, `features/suites/`, and generated `CONFORMANCE.md` describe project
-  claims. They begin empty; repository tooling is not a product implementation.
-- [TEMPLATE-CONTRACT.md](TEMPLATE-CONTRACT.md) defines inherited policy and the
-  immutable SDK/template update process.
-- [VERIFICATION.md](VERIFICATION.md) defines the full acceptance boundary;
-  [TEMPLATE-VERIFICATION.md](TEMPLATE-VERIFICATION.md) maps the scaffold's gates.
-- Reusable workflows are infrastructure. Do not enable publication or
-  deployment before the project model and its acceptance criteria exist.
+The response is one of:
+
+- `status accepted` followed by the canonical, sorted project;
+- `status rejected` followed by every policy finding (`finding memory ...`,
+  `finding plaintext-pii ...`) and the canonical project; or
+- `status error` with the first failing line and its typed code
+  (`missing-header`, `unknown-command`, `wrong-arity`, `empty-field`,
+  `unknown-kind`, `invalid-number`, `duplicate-node`, `unknown-node`,
+  `self-edge`, `duplicate-edge`, `output-source`, `input-target`,
+  `not-an-input`, `duplicate-pii`, `duplicate-policy`, `line-overflow`) or
+  request code (`empty`, `too-large`, `invalid-utf8`, `too-many-lines`), or
+  `response too-large` when the report would exceed 16384 bytes.
+
+The model proves, among other things, that a run is accepted only if the
+project is compliant (`Engine.completedRunAcceptedOnlyIfCompliant`) and that a
+failed run is never accepted (`Engine.failedRunNeverAccepted`).
+
+## Repository layout
+
+| Path | Owner |
+| --- | --- |
+| `src/` | authoritative LexLean model modules (`System.lex.tex` is the entrypoint) |
+| `language/prism.arch/` | the architecture lexicon the model's glossary uses |
+| `lexlean.toml`, `lexlean.lock` | LexLean project and its locked package closure |
+| `prismpm.toml` | PrismPM project; generated output goes to `.prism/` |
+| `lakefile.toml`, `lean-toolchain`, `lake-manifest.json` | Lean workspace bound by `lexlean.lock` |
+| `model/`, `features/suites/`, `CONFORMANCE.md` | the repository's claim register (template contract) |
+| `crates/`, `xtask/`, `bootstrap/` | repository gates inherited from the UOR template |
+
+| Module | Content |
+| --- | --- |
+| `Core` | nodes, edges, policies, violations, canonical form |
+| `Interaction` | script statements, parsing, admission of each statement |
+| `Compliance` | memory and PII-propagation findings |
+| `Engine` | line runner, certification, outcome rendering |
+| `Specification` | request dispatch and the text application with its acceptance vectors |
+| `Foundation.View.Text.V1.Model` | the text view contract |
+| `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
+| `System` | the prism-code system model and its GitHub Pages target |
+
+## Toolchain
+
+prism-code is built with LexLean and the PrismPM SDK, used only through the
+digest-pinned SDK image in `prismpm.lock`. That lock and `template.lock` are
+written when the repository binds a public PrismPM SDK release; until then
+`just vv` and the bootstrap workflow cannot pass. See
+[TEMPLATE-CONTRACT.md](TEMPLATE-CONTRACT.md), [AGENTS.md](AGENTS.md), and
+[VERIFICATION.md](VERIFICATION.md).
 
 Licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE).
