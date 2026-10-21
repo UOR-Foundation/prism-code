@@ -1,0 +1,615 @@
+\begin{lexlean}{Quality}
+\useglossary{lexlean.std.bool@1.2.0}
+\useglossary{lexlean.std.nat@1.2.0}
+\useglossary{prism.arch@1.0.0}
+\useglossary{prism.qual@1.0.0}
+\importmodule{Foundation.Qual}
+\importmodule{Foundation.View.Text.V1.Model}
+\importmodule{Foundation.View.Text.V3.Model}
+\importmodule{Specification}
+\title{Prism-code quality model}
+\begin{semanticmodule}
+inductive{
+  name: Bound,
+  type_parameters: [],
+  parameters: [],
+  constructors: [{name: AtMost, fields: []}, {name: AtLeast, fields: []}]
+}
+
+inductive{
+  name: BudgetUnit,
+  type_parameters: [],
+  parameters: [],
+  constructors: [
+    {name: Milliseconds, fields: []},
+    {name: Bytes, fields: []},
+    {name: Count, fields: []}
+  ]
+}
+
+inductive{
+  name: Basis,
+  type_parameters: [],
+  parameters: [],
+  constructors: [
+    {name: Derived, fields: []},
+    {name: Placeholder, fields: []},
+    {name: ZeroTolerance, fields: []}
+  ]
+}
+
+inductive{
+  name: Verdict,
+  type_parameters: [],
+  parameters: [],
+  constructors: [{name: Proved, fields: []}, {name: Open, fields: []}]
+}
+
+structure{
+  name: Named,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: index, type: Nat}, {name: name, type: String}, {name: text, type: String}]
+}
+
+structure{
+  name: Budget,
+  type_parameters: [],
+  parameters: [],
+  fields: [
+    {name: measure, type: Nat},
+    {name: bound, type: Bound},
+    {name: unit, type: BudgetUnit},
+    {name: basis, type: Basis},
+    {name: verdict, type: Verdict},
+    {name: source, type: String}
+  ]
+}
+
+definition{
+  name: characteristicPerformanceEfficiency,
+  parameters: [],
+  result: Foundation.Qual::ProductQualityCharacteristic,
+  body: (record Foundation.Qual::ProductQualityCharacteristic {index := 0})
+}
+
+definition{
+  name: characteristicFunctionalSuitability,
+  parameters: [],
+  result: Foundation.Qual::ProductQualityCharacteristic,
+  body: (record Foundation.Qual::ProductQualityCharacteristic {index := 1})
+}
+
+definition{
+  name: characteristicCompatibility,
+  parameters: [],
+  result: Foundation.Qual::ProductQualityCharacteristic,
+  body: (record Foundation.Qual::ProductQualityCharacteristic {index := 2})
+}
+
+definition{
+  name: characteristicUsability,
+  parameters: [],
+  result: Foundation.Qual::ProductQualityCharacteristic,
+  body: (record Foundation.Qual::ProductQualityCharacteristic {index := 3})
+}
+
+definition{
+  name: subcharacteristicTimeBehavior,
+  parameters: [],
+  result: Foundation.Qual::QualitySubcharacteristic,
+  body: (record Foundation.Qual::QualitySubcharacteristic {index := 0, characteristicIndex := 0})
+}
+
+definition{
+  name: subcharacteristicResourceUtilization,
+  parameters: [],
+  result: Foundation.Qual::QualitySubcharacteristic,
+  body: (record Foundation.Qual::QualitySubcharacteristic {index := 1, characteristicIndex := 0})
+}
+
+definition{
+  name: subcharacteristicCapacity,
+  parameters: [],
+  result: Foundation.Qual::QualitySubcharacteristic,
+  body: (record Foundation.Qual::QualitySubcharacteristic {index := 2, characteristicIndex := 0})
+}
+
+definition{
+  name: subcharacteristicFunctionalCorrectness,
+  parameters: [],
+  result: Foundation.Qual::QualitySubcharacteristic,
+  body: (record Foundation.Qual::QualitySubcharacteristic {index := 3, characteristicIndex := 1})
+}
+
+definition{
+  name: subcharacteristicInteroperability,
+  parameters: [],
+  result: Foundation.Qual::QualitySubcharacteristic,
+  body: (record Foundation.Qual::QualitySubcharacteristic {index := 4, characteristicIndex := 2})
+}
+
+definition{
+  name: subcharacteristicAccessibility,
+  parameters: [],
+  result: Foundation.Qual::QualitySubcharacteristic,
+  body: (record Foundation.Qual::QualitySubcharacteristic {index := 5, characteristicIndex := 3})
+}
+
+definition{
+  name: requirementBrowserLatency,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 0, subcharacteristicIndex := 0})
+}
+
+definition{
+  name: requirementCliLatency,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 1, subcharacteristicIndex := 0})
+}
+
+definition{
+  name: requirementGuestSize,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 2, subcharacteristicIndex := 1})
+}
+
+definition{
+  name: requirementClosureSize,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 3, subcharacteristicIndex := 1})
+}
+
+definition{
+  name: requirementRequestCapacity,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 4, subcharacteristicIndex := 2})
+}
+
+definition{
+  name: requirementResponseCapacity,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 5, subcharacteristicIndex := 2})
+}
+
+definition{
+  name: requirementGuestAllocation,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 6, subcharacteristicIndex := 2})
+}
+
+definition{
+  name: requirementAcceptanceVectors,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 7, subcharacteristicIndex := 3})
+}
+
+definition{
+  name: requirementParity,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 8, subcharacteristicIndex := 4})
+}
+
+definition{
+  name: requirementAccessibility,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 9, subcharacteristicIndex := 5})
+}
+
+definition{
+  name: measureBrowserLatency,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 0, requirementIndex := 0, threshold := 50})
+}
+
+definition{
+  name: measureCliLatency,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 1, requirementIndex := 1, threshold := 20})
+}
+
+definition{
+  name: measureGuestSize,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 2, requirementIndex := 2, threshold := 262144})
+}
+
+definition{
+  name: measureClosureSize,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 3, requirementIndex := 3, threshold := 524288})
+}
+
+definition{
+  name: measureRequestCapacity,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 4, requirementIndex := 4, threshold := 4096})
+}
+
+definition{
+  name: measureResponseCapacity,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 5, requirementIndex := 5, threshold := 16384})
+}
+
+definition{
+  name: measureGuestAllocation,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 6, requirementIndex := 6, threshold := 4097})
+}
+
+definition{
+  name: measureAcceptanceVectors,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 7, requirementIndex := 7, threshold := 25})
+}
+
+definition{
+  name: measureParity,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 8, requirementIndex := 8, threshold := 0})
+}
+
+definition{
+  name: measureAccessibility,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 9, requirementIndex := 9, threshold := 0})
+}
+
+definition{
+  name: characteristicRecords,
+  parameters: [],
+  result: (List Foundation.Qual::ProductQualityCharacteristic),
+  body: (cons (characteristicPerformanceEfficiency) (cons (characteristicFunctionalSuitability) (cons (characteristicCompatibility) (cons (characteristicUsability) (nil Foundation.Qual::ProductQualityCharacteristic)))))
+}
+
+definition{
+  name: subcharacteristicRecords,
+  parameters: [],
+  result: (List Foundation.Qual::QualitySubcharacteristic),
+  body: (cons (subcharacteristicTimeBehavior) (cons (subcharacteristicResourceUtilization) (cons (subcharacteristicCapacity) (cons (subcharacteristicFunctionalCorrectness) (cons (subcharacteristicInteroperability) (cons (subcharacteristicAccessibility) (nil Foundation.Qual::QualitySubcharacteristic)))))))
+}
+
+definition{
+  name: requirementRecords,
+  parameters: [],
+  result: (List Foundation.Qual::QualityRequirement),
+  body: (cons (requirementBrowserLatency) (cons (requirementCliLatency) (cons (requirementGuestSize) (cons (requirementClosureSize) (cons (requirementRequestCapacity) (cons (requirementResponseCapacity) (cons (requirementGuestAllocation) (cons (requirementAcceptanceVectors) (cons (requirementParity) (cons (requirementAccessibility) (nil Foundation.Qual::QualityRequirement)))))))))))
+}
+
+definition{
+  name: measureRecords,
+  parameters: [],
+  result: (List Foundation.Qual::QualityMeasure),
+  body: (cons (measureBrowserLatency) (cons (measureCliLatency) (cons (measureGuestSize) (cons (measureClosureSize) (cons (measureRequestCapacity) (cons (measureResponseCapacity) (cons (measureGuestAllocation) (cons (measureAcceptanceVectors) (cons (measureParity) (cons (measureAccessibility) (nil Foundation.Qual::QualityMeasure)))))))))))
+}
+
+definition{
+  name: characteristicNames,
+  parameters: [],
+  result: (List Named),
+  body: (cons (record Named {index := 0, name := "Performance efficiency", text := "Time behavior and resource use of the check."}) (cons (record Named {index := 1, name := "Functional suitability", text := "The check reports what the policies require, and nothing else."}) (cons (record Named {index := 2, name := "Compatibility", text := "The page and the command line interoperate by giving the same response."}) (cons (record Named {index := 3, name := "Usability", text := "The page can be used by people with disabilities."}) (nil Named)))))
+}
+
+definition{
+  name: subcharacteristicNames,
+  parameters: [],
+  result: (List Named),
+  body: (cons (record Named {index := 0, name := "Time behavior", text := "How long a check takes on the largest request."}) (cons (record Named {index := 1, name := "Resource utilization", text := "How many bytes the guest and the page weigh."}) (cons (record Named {index := 2, name := "Capacity", text := "The largest request, response and guest allocation."}) (cons (record Named {index := 3, name := "Functional correctness", text := "Every public outcome has an acceptance vector."}) (cons (record Named {index := 4, name := "Interoperability", text := "The web and command-line adapters agree."}) (cons (record Named {index := 5, name := "Accessibility", text := "The page meets WCAG 2.2 level AA."}) (nil Named)))))))
+}
+
+definition{
+  name: requirementNames,
+  parameters: [],
+  result: (List Named),
+  body: (cons (record Named {index := 0, name := "Browser check latency", text := "Checking vector 12, the largest request, in the browser takes under 50 ms."}) (cons (record Named {index := 1, name := "CLI check latency", text := "Checking vector 12, the largest request, with the command line takes under 20 ms."}) (cons (record Named {index := 2, name := "Wasm guest size", text := "The Core-Wasm guest is under 256 KiB."}) (cons (record Named {index := 3, name := "Browser closure size", text := "The Pages artifact closure is under 512 KiB."}) (cons (record Named {index := 4, name := "Request bound", text := "A request is at most 4096 bytes."}) (cons (record Named {index := 5, name := "Response bound", text := "A response is at most 16384 bytes."}) (cons (record Named {index := 6, name := "Guest allocation bound", text := "The guest allocates at most 4097 bytes."}) (cons (record Named {index := 7, name := "Acceptance coverage", text := "The model carries at least 25 acceptance vectors, one per reachable public outcome."}) (cons (record Named {index := 8, name := "Web and CLI parity", text := "No acceptance vector gives a different response in the page and the command line."}) (cons (record Named {index := 9, name := "Page accessibility", text := "The page has no WCAG 2.2 AA violation."}) (nil Named)))))))))))
+}
+
+definition{
+  name: budgets,
+  parameters: [],
+  result: (List Budget),
+  body: (cons (record Budget {measure := 0, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Milliseconds), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first GitHub-hosted runner measurement plus a stated margin"}) (cons (record Budget {measure := 1, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Milliseconds), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first GitHub-hosted runner measurement plus a stated margin"}) (cons (record Budget {measure := 2, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first build measurement plus a stated margin"}) (cons (record Budget {measure := 3, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first build measurement plus a stated margin"}) (cons (record Budget {measure := 4, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.requestMaximum"}) (cons (record Budget {measure := 5, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.responseMaximum"}) (cons (record Budget {measure := 6, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.guestAllocationMaximum"}) (cons (record Budget {measure := 7, bound := (ctor Bound.AtLeast), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.acceptanceVectors; conformance IDs #8 to #11"}) (cons (record Budget {measure := 8, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#19 parity gate"}) (cons (record Budget {measure := 9, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements"}) (nil Budget)))))))))))
+}
+
+definition{
+  name: natMember,
+  parameters: [value : Nat, values : (List Nat)],
+  result: Bool,
+  body: (match values
+    | List.nil => false
+    | List.cons head rest => ((value =? head) || (natMember value rest))),
+  recursive_argument: values
+}
+
+definition{
+  name: allMembers,
+  parameters: [wanted : (List Nat), values : (List Nat)],
+  result: Bool,
+  body: (match wanted
+    | List.nil => true
+    | List.cons head rest => ((natMember head values) && (allMembers rest values))),
+  recursive_argument: wanted
+}
+
+definition{
+  name: sameNats,
+  parameters: [left : (List Nat), right : (List Nat)],
+  result: Bool,
+  body: (match left
+    | List.nil => (match right | List.nil => true | List.cons other more => false)
+    | List.cons head rest => (match right
+      | List.nil => false
+      | List.cons other more => ((head =? other) && (sameNats rest more)))),
+  recursive_argument: left
+}
+
+definition{
+  name: nonEmpty,
+  parameters: [text : String],
+  result: Bool,
+  body: (if (prim equal text "" : Bool) then false else true)
+}
+
+definition{
+  name: namedIndexes,
+  parameters: [records : (List Named)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head index) (namedIndexes rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: characteristicIndexes,
+  parameters: [records : (List Foundation.Qual::ProductQualityCharacteristic)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head index) (characteristicIndexes rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: subcharacteristicIndexes,
+  parameters: [records : (List Foundation.Qual::QualitySubcharacteristic)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head index) (subcharacteristicIndexes rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: subcharacteristicParents,
+  parameters: [records : (List Foundation.Qual::QualitySubcharacteristic)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head characteristicIndex) (subcharacteristicParents rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: requirementIndexes,
+  parameters: [records : (List Foundation.Qual::QualityRequirement)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head index) (requirementIndexes rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: requirementParents,
+  parameters: [records : (List Foundation.Qual::QualityRequirement)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head subcharacteristicIndex) (requirementParents rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: measureIndexes,
+  parameters: [records : (List Foundation.Qual::QualityMeasure)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head index) (measureIndexes rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: measureRequirements,
+  parameters: [records : (List Foundation.Qual::QualityMeasure)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head requirementIndex) (measureRequirements rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: budgetMeasures,
+  parameters: [records : (List Budget)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head measure) (budgetMeasures rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: budgetsSourced,
+  parameters: [records : (List Budget)],
+  result: Bool,
+  body: (match records
+    | List.nil => true
+    | List.cons head rest => ((nonEmpty (project head source)) && (budgetsSourced rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: thresholdOf,
+  parameters: [wanted : Nat, records : (List Foundation.Qual::QualityMeasure)],
+  result: Nat,
+  body: (match records
+    | List.nil => 0
+    | List.cons head rest => (if ((project head index) =? wanted) then (project head threshold) else (thresholdOf wanted rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: placeholderMeasures,
+  parameters: [records : (List Budget)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (match (project head basis)
+      | Basis.Placeholder => (cons (project head measure) (placeholderMeasures rest))
+      | Basis.Derived => (placeholderMeasures rest)
+      | Basis.ZeroTolerance => (placeholderMeasures rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: provedMeasures,
+  parameters: [records : (List Budget)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (match (project head verdict)
+      | Verdict.Proved => (cons (project head measure) (provedMeasures rest))
+      | Verdict.Open => (provedMeasures rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: vectorCount,
+  parameters: [vectors : (List Foundation.View.Text.V1.Model::AcceptanceVector)],
+  result: Nat,
+  body: (match vectors | List.nil => 0 | List.cons head rest => (1 + (vectorCount rest))),
+  recursive_argument: vectors
+}
+
+definition{
+  name: requestLengthAt,
+  parameters: [
+    position : Nat,
+    current : Nat,
+    vectors : (List Foundation.View.Text.V1.Model::AcceptanceVector)
+  ],
+  result: Nat,
+  body: (match vectors
+    | List.nil => 0
+    | List.cons head rest => (if (position =? current) then (prim length (project head request) : Nat) else (requestLengthAt position (current + 1) rest))),
+  recursive_argument: vectors
+}
+
+definition{
+  name: declaredVectors,
+  parameters: [],
+  result: (List Foundation.View.Text.V1.Model::AcceptanceVector),
+  body: (project (Specification::application) acceptanceVectors)
+}
+
+definition{
+  name: boundsDeclared,
+  parameters: [],
+  result: Bool,
+  body: ((prim equal (project (Specification::application) requestMaximum) (4096 : UInt32) : Bool) && ((prim equal (project (Specification::application) responseMaximum) (16384 : UInt32) : Bool) && (prim equal (project (Specification::application) guestAllocationMaximum) (4097 : UInt32) : Bool)))
+}
+
+definition{
+  name: qualityValid,
+  parameters: [],
+  result: Bool,
+  body: ((sameNats (namedIndexes (characteristicNames)) (characteristicIndexes (characteristicRecords))) && ((sameNats (namedIndexes (subcharacteristicNames)) (subcharacteristicIndexes (subcharacteristicRecords))) && ((sameNats (namedIndexes (requirementNames)) (requirementIndexes (requirementRecords))) && ((allMembers (subcharacteristicParents (subcharacteristicRecords)) (characteristicIndexes (characteristicRecords))) && ((allMembers (characteristicIndexes (characteristicRecords)) (subcharacteristicParents (subcharacteristicRecords))) && ((allMembers (requirementParents (requirementRecords)) (subcharacteristicIndexes (subcharacteristicRecords))) && ((allMembers (measureRequirements (measureRecords)) (requirementIndexes (requirementRecords))) && ((allMembers (requirementIndexes (requirementRecords)) (measureRequirements (measureRecords))) && ((sameNats (budgetMeasures (budgets)) (measureIndexes (measureRecords))) && (budgetsSourced (budgets)))))))))))
+}
+
+theorem{
+  name: qualityModelHolds,
+  parameters: [],
+  statement: ((qualityValid) = true),
+  proof: decide{}
+}
+
+theorem{
+  name: placeholderBudgets,
+  parameters: [],
+  statement: ((placeholderMeasures (budgets)) = (cons 0 (cons 1 (cons 2 (cons 3 (nil Nat)))))),
+  proof: decide{}
+}
+
+theorem{
+  name: provedBudgets,
+  parameters: [],
+  statement: ((provedMeasures (budgets)) = (cons 4 (cons 5 (cons 6 (cons 7 (nil Nat)))))),
+  proof: decide{}
+}
+
+theorem{
+  name: capacityDeclared,
+  parameters: [],
+  statement: ((boundsDeclared) = true),
+  proof: decide{}
+}
+
+theorem{
+  name: capacityBudgetsAgree,
+  parameters: [],
+  statement: ((thresholdOf 4 (measureRecords)) = 4096),
+  proof: decide{}
+}
+
+theorem{
+  name: responseBudgetAgrees,
+  parameters: [],
+  statement: ((thresholdOf 5 (measureRecords)) = 16384),
+  proof: decide{}
+}
+
+theorem{
+  name: allocationBudgetAgrees,
+  parameters: [],
+  statement: ((thresholdOf 6 (measureRecords)) = 4097),
+  proof: decide{}
+}
+
+theorem{
+  name: acceptanceCoverageAgrees,
+  parameters: [],
+  statement: ((vectorCount (declaredVectors)) = (thresholdOf 7 (measureRecords))),
+  proof: decide{}
+}
+
+theorem{
+  name: vectorTwelveIsLargest,
+  parameters: [],
+  statement: ((requestLengthAt 11 0 (declaredVectors)) = (thresholdOf 4 (measureRecords))),
+  proof: decide{}
+}
+\end{semanticmodule}
+\end{lexlean}
