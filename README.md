@@ -71,6 +71,8 @@ failed run is never accepted (`Engine.failedRunNeverAccepted`).
 | `Foundation.View.Text.V1.Model` | the text view contract |
 | `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
 | `System` | the prism-code system model and its GitHub Pages target |
+| `Architecture` | the ISO/IEC/IEEE 42010 architecture description, checked against `System` |
+| `Foundation.Arch` | the architecture vocabulary (copy of the PrismPM stdlib module) |
 
 ## Toolchain
 
