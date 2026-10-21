@@ -1,7 +1,7 @@
 spec = "lexlean/project/1"
-name = "prism-coder"
-language = "1.1"
-module_prefix = "PrismCoder"
+name = "prism-code"
+language = "1.2"
+module_prefix = "PrismCode"
 source_roots = ["src"]
 entrypoints = ["src/System.lex.tex"]
 build_root = ".lexlean"

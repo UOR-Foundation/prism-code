@@ -13,15 +13,16 @@ Development, version 0.1.0. The authoritative model is committed; the SDK
 binding, generated artifacts, CLI, and Pages deployment are not yet in place.
 The work is tracked in the prism-code GitHub project and its milestones.
 
-The model was imported as `prism-coder`. Its product identifiers (`prism-coder`,
-`PrismCoder`, the `prism-coder/1` script header, and the repository and Pages
-URLs) are renamed to `prism-code` through the LexLean toolchain, not by hand,
-because the application model digest and lock bind those bytes.
+The model is LexLean language 1.2 notation, built with LexLean v0.4 and locked
+in `lexlean.lock` (`lexlean/lock/2`). Its product identifiers (`prism-code`,
+`PrismCode`, the `prism-code/1` script header, and the repository and Pages
+URLs) are bound by the application model digest in `System` and by the lock, so
+they change only through the LexLean and PrismPM toolchain, not by hand.
 
 ## What it does
 
 A request is UTF-8 text of at most 4096 bytes. The first line is the header
-`prism-coder/1`; each further non-empty line is one statement:
+`prism-code/1`; each further non-empty line is one statement:
 
 | Statement | Meaning |
 | --- | --- |
