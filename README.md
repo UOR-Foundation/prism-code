@@ -49,6 +49,26 @@ The model proves, among other things, that a run is accepted only if the
 project is compliant (`Engine.completedRunAcceptedOnlyIfCompliant`) and that a
 failed run is never accepted (`Engine.failedRunNeverAccepted`).
 
+## Command line
+
+The command-line interface is declared in the model, not written by hand. The
+application record in `Specification` uses the `prismpm/text-application/3`
+profile (`Foundation.View.Text.V3.Model`), whose `cli` field holds the command,
+description, help sections, named examples and exit-code map. PrismPM
+generates the program from that record:
+
+```
+prism-code check [FILE]    read the script from FILE, or from stdin when FILE
+                           is omitted or `-`; print the report unchanged
+prism-code examples [NAME] print a named example script
+prism-code --help
+prism-code --version
+```
+
+A request over 4096 bytes is refused before dispatch. Exit codes come from the
+model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
+64, input or output error 74.
+
 ## Repository layout
 
 | Path | Owner |
