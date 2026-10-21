@@ -8,9 +8,8 @@ edition = "2021"
 # Raise this when something here needs a newer compiler; nothing does yet.
 rust-version = "1.89"
 license = "MIT OR Apache-2.0"
-# Instantiated repositories set their own URLs here.
-repository = "https://github.com/UOR-Foundation/template"
-homepage = "https://github.com/UOR-Foundation/template"
+repository = "https://github.com/UOR-Foundation/prism-code"
+homepage = "https://uor-foundation.github.io/prism-code/"
 authors = ["UOR Foundation"]
 keywords = []
 categories = []
