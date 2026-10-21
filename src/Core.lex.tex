@@ -1,8 +1,390 @@
 \begin{lexlean}{Core}
-\useglossary{lexlean.std.bool@1.1.0}
-\useglossary{lexlean.std.nat@1.1.0}
+\useglossary{lexlean.std.bool@1.2.0}
+\useglossary{lexlean.std.nat@1.2.0}
 \title{Boolean}
 \begin{semanticmodule}
-\semanticdata{{"declarations":[{"constructors":[{"fields":[],"name":"Input"},{"fields":[],"name":"Operator"},{"fields":[],"name":"Encrypt"},{"fields":[],"name":"Output"}],"kind":"inductive","name":"NodeKind","parameters":[],"type_parameters":[]},{"fields":[{"name":"name","type":{"kind":"string"}},{"name":"kind","type":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}},{"name":"memory","type":{"kind":"uint64"}}],"kind":"structure","name":"Node","parameters":[],"type_parameters":[]},{"fields":[{"name":"source","type":{"kind":"string"}},{"name":"target","type":{"kind":"string"}}],"kind":"structure","name":"Edge","parameters":[],"type_parameters":[]},{"fields":[{"name":"memoryLimit","type":{"kind":"option","value":{"kind":"uint64"}}},{"name":"piiEncryption","type":{"kind":"bool"}}],"kind":"structure","name":"Policies","parameters":[],"type_parameters":[]},{"fields":[{"name":"policies","type":{"arguments":[],"kind":"named","member":{"name":"Policies"}}},{"name":"nodes","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}},{"name":"edges","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}},{"name":"pii","type":{"element":{"kind":"string"},"kind":"list"}}],"kind":"structure","name":"Project","parameters":[],"type_parameters":[]},{"constructors":[{"fields":[],"name":"DuplicateNode"},{"fields":[],"name":"UnknownNode"},{"fields":[],"name":"SelfEdge"},{"fields":[],"name":"DuplicateEdge"},{"fields":[],"name":"OutputSource"},{"fields":[],"name":"InputTarget"},{"fields":[],"name":"NotAnInput"},{"fields":[],"name":"DuplicatePii"},{"fields":[],"name":"DuplicatePolicy"}],"kind":"inductive","name":"Violation","parameters":[],"type_parameters":[]},{"constructors":[{"fields":[],"name":"Admit"},{"fields":[{"arguments":[],"kind":"named","member":{"name":"Violation"}}],"name":"Refuse"}],"kind":"inductive","name":"Admission","parameters":[],"type_parameters":[]},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":true},"constructor":{"name":"Admission.Admit"}},{"binders":["violation"],"body":{"kind":"bool","value":false},"constructor":{"name":"Admission.Refuse"}}],"kind":"match","scrutinee":{"kind":"var","name":"admission"}},"kind":"definition","name":"admits","parameters":[{"name":"admission","type":{"arguments":[],"kind":"named","member":{"name":"Admission"}}}],"result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"arguments":[{"kind":"var","name":"candidate"}],"constructor":{"name":"Result.ok"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"Project"}},{"arguments":[],"kind":"named","member":{"name":"Violation"}}]},"constructor":{"name":"Admission.Admit"}},{"binders":["violation"],"body":{"arguments":[{"kind":"var","name":"violation"}],"constructor":{"name":"Result.error"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"Project"}},{"arguments":[],"kind":"named","member":{"name":"Violation"}}]},"constructor":{"name":"Admission.Refuse"}}],"kind":"match","scrutinee":{"kind":"var","name":"admission"}},"kind":"definition","name":"gate","parameters":[{"name":"admission","type":{"arguments":[],"kind":"named","member":{"name":"Admission"}}},{"name":"candidate","type":{"arguments":[],"kind":"named","member":{"name":"Project"}}}],"result":{"error":{"arguments":[],"kind":"named","member":{"name":"Violation"}},"kind":"result","ok":{"arguments":[],"kind":"named","member":{"name":"Project"}}}},{"body":{"branches":[{"binders":["violation"],"body":{"kind":"bool","value":false},"constructor":{"name":"Result.error"}},{"binders":["project"],"body":{"kind":"bool","value":true},"constructor":{"name":"Result.ok"}}],"kind":"match","scrutinee":{"kind":"var","name":"outcome"}},"kind":"definition","name":"admitted","parameters":[{"name":"outcome","type":{"error":{"arguments":[],"kind":"named","member":{"name":"Violation"}},"kind":"result","ok":{"arguments":[],"kind":"named","member":{"name":"Project"}}}}],"result":{"kind":"bool"}},{"kind":"theorem","name":"gateAdmitsExactly","parameters":[{"name":"admission","type":{"arguments":[],"kind":"named","member":{"name":"Admission"}}},{"name":"candidate","type":{"arguments":[],"kind":"named","member":{"name":"Project"}}}],"proof":{"branches":[{"binders":[],"constructor":"Admit","proof":{"kind":"reflexivity"}},{"binders":["violation"],"constructor":"Refuse","proof":{"kind":"reflexivity"}}],"kind":"cases","scrutinee":"admission"},"statement":{"kind":"eq","left":{"arguments":[{"arguments":[{"kind":"var","name":"admission"},{"kind":"var","name":"candidate"}],"function":{"name":"gate"},"kind":"call"}],"function":{"name":"admitted"},"kind":"call"},"right":{"arguments":[{"kind":"var","name":"admission"}],"function":{"name":"admits"},"kind":"call"}}},{"body":{"fields":[{"field":"policies","value":{"fields":[{"field":"memoryLimit","value":{"arguments":[],"constructor":{"name":"Option.none"},"kind":"constructor","type_arguments":[{"kind":"uint64"}]}},{"field":"piiEncryption","value":{"kind":"bool","value":false}}],"kind":"record","type":{"name":"Policies"}}},{"field":"nodes","value":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"nil"}},{"field":"edges","value":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"nil"}},{"field":"pii","value":{"element":{"kind":"string"},"kind":"nil"}}],"kind":"record","type":{"name":"Project"}},"kind":"definition","name":"emptyProject","parameters":[],"result":{"arguments":[],"kind":"named","member":{"name":"Project"}}},{"body":{"branches":[{"binders":[],"body":{"kind":"string","value":"input"},"constructor":{"name":"NodeKind.Input"}},{"binders":[],"body":{"kind":"string","value":"operator"},"constructor":{"name":"NodeKind.Operator"}},{"binders":[],"body":{"kind":"string","value":"encrypt"},"constructor":{"name":"NodeKind.Encrypt"}},{"binders":[],"body":{"kind":"string","value":"output"},"constructor":{"name":"NodeKind.Output"}}],"kind":"match","scrutinee":{"kind":"var","name":"kind"}},"kind":"definition","name":"kindName","parameters":[{"name":"kind","type":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}}],"result":{"kind":"string"}},{"body":{"condition":{"arguments":[{"kind":"var","name":"text"},{"kind":"string","value":"input"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"else_value":{"condition":{"arguments":[{"kind":"var","name":"text"},{"kind":"string","value":"operator"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"else_value":{"condition":{"arguments":[{"kind":"var","name":"text"},{"kind":"string","value":"encrypt"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"else_value":{"condition":{"arguments":[{"kind":"var","name":"text"},{"kind":"string","value":"output"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"else_value":{"arguments":[],"constructor":{"name":"Option.none"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}]},"kind":"if","then_value":{"arguments":[{"arguments":[],"constructor":{"name":"NodeKind.Output"},"kind":"constructor"}],"constructor":{"name":"Option.some"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}]}},"kind":"if","then_value":{"arguments":[{"arguments":[],"constructor":{"name":"NodeKind.Encrypt"},"kind":"constructor"}],"constructor":{"name":"Option.some"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}]}},"kind":"if","then_value":{"arguments":[{"arguments":[],"constructor":{"name":"NodeKind.Operator"},"kind":"constructor"}],"constructor":{"name":"Option.some"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}]}},"kind":"if","then_value":{"arguments":[{"arguments":[],"constructor":{"name":"NodeKind.Input"},"kind":"constructor"}],"constructor":{"name":"Option.some"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}]}},"kind":"definition","name":"parseKind","parameters":[{"name":"text","type":{"kind":"string"}}],"result":{"kind":"option","value":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":true},"constructor":{"name":"NodeKind.Input"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Operator"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Encrypt"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Output"}}],"kind":"match","scrutinee":{"kind":"var","name":"kind"}},"kind":"definition","name":"isInput","parameters":[{"name":"kind","type":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}}],"result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Input"}},{"binders":[],"body":{"kind":"bool","value":true},"constructor":{"name":"NodeKind.Operator"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Encrypt"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Output"}}],"kind":"match","scrutinee":{"kind":"var","name":"kind"}},"kind":"definition","name":"isOperator","parameters":[{"name":"kind","type":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}}],"result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Input"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Operator"}},{"binders":[],"body":{"kind":"bool","value":true},"constructor":{"name":"NodeKind.Encrypt"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Output"}}],"kind":"match","scrutinee":{"kind":"var","name":"kind"}},"kind":"definition","name":"isEncrypt","parameters":[{"name":"kind","type":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}}],"result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Input"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Operator"}},{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"NodeKind.Encrypt"}},{"binders":[],"body":{"kind":"bool","value":true},"constructor":{"name":"NodeKind.Output"}}],"kind":"match","scrutinee":{"kind":"var","name":"kind"}},"kind":"definition","name":"isOutput","parameters":[{"name":"kind","type":{"arguments":[],"kind":"named","member":{"name":"NodeKind"}}}],"result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"arguments":[],"constructor":{"name":"Option.none"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"Node"}}]},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"condition":{"arguments":[{"field":"name","kind":"project","value":{"kind":"var","name":"head"}},{"kind":"var","name":"name"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"else_value":{"arguments":[{"kind":"var","name":"rest"},{"kind":"var","name":"name"}],"function":{"name":"findNode"},"kind":"call"},"kind":"if","then_value":{"arguments":[{"kind":"var","name":"head"}],"constructor":{"name":"Option.some"},"kind":"constructor","type_arguments":[{"arguments":[],"kind":"named","member":{"name":"Node"}}]}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"nodes"}},"kind":"definition","name":"findNode","parameters":[{"name":"nodes","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}},{"name":"name","type":{"kind":"string"}}],"recursive_argument":"nodes","result":{"kind":"option","value":{"arguments":[],"kind":"named","member":{"name":"Node"}}}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"Option.none"}},{"binders":["node"],"body":{"kind":"bool","value":true},"constructor":{"name":"Option.some"}}],"kind":"match","scrutinee":{"arguments":[{"field":"nodes","kind":"project","value":{"kind":"var","name":"project"}},{"kind":"var","name":"name"}],"function":{"name":"findNode"},"kind":"call"}},"kind":"definition","name":"hasNode","parameters":[{"name":"project","type":{"arguments":[],"kind":"named","member":{"name":"Project"}}},{"name":"name","type":{"kind":"string"}}],"result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"condition":{"arguments":[{"kind":"var","name":"head"},{"kind":"var","name":"name"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"else_value":{"arguments":[{"kind":"var","name":"rest"},{"kind":"var","name":"name"}],"function":{"name":"listsName"},"kind":"call"},"kind":"if","then_value":{"kind":"bool","value":true}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"names"}},"kind":"definition","name":"listsName","parameters":[{"name":"names","type":{"element":{"kind":"string"},"kind":"list"}},{"name":"name","type":{"kind":"string"}}],"recursive_argument":"names","result":{"kind":"bool"}},{"body":{"branches":[{"binders":[],"body":{"kind":"bool","value":false},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"condition":{"kind":"and","left":{"arguments":[{"field":"source","kind":"project","value":{"kind":"var","name":"head"}},{"kind":"var","name":"source"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"right":{"arguments":[{"field":"target","kind":"project","value":{"kind":"var","name":"head"}},{"kind":"var","name":"target"}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}}},"else_value":{"arguments":[{"kind":"var","name":"rest"},{"kind":"var","name":"source"},{"kind":"var","name":"target"}],"function":{"name":"hasEdge"},"kind":"call"},"kind":"if","then_value":{"kind":"bool","value":true}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"edges"}},"kind":"definition","name":"hasEdge","parameters":[{"name":"edges","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}},{"name":"source","type":{"kind":"string"}},{"name":"target","type":{"kind":"string"}}],"recursive_argument":"edges","result":{"kind":"bool"}},{"axioms":["propext"],"body":{"arguments":[{"arguments":[{"arguments":[{"kind":"var","name":"left"}],"kind":"primitive","operation":"utf8_encode","result":{"kind":"bytes"}},{"arguments":[{"kind":"var","name":"right"}],"kind":"primitive","operation":"utf8_encode","result":{"kind":"bytes"}}],"kind":"primitive","operation":"compare_bytes","result":{"kind":"ordering"}},{"arguments":[{"hex":"","kind":"bytes"},{"hex":"00","kind":"bytes"}],"kind":"primitive","operation":"compare_bytes","result":{"kind":"ordering"}}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"kind":"definition","name":"precedes","parameters":[{"name":"left","type":{"kind":"string"}},{"name":"right","type":{"kind":"string"}}],"result":{"kind":"bool"}},{"axioms":["propext"],"body":{"kind":"or","left":{"arguments":[{"field":"source","kind":"project","value":{"kind":"var","name":"left"}},{"field":"source","kind":"project","value":{"kind":"var","name":"right"}}],"function":{"name":"precedes"},"kind":"call"},"right":{"kind":"and","left":{"arguments":[{"field":"source","kind":"project","value":{"kind":"var","name":"left"}},{"field":"source","kind":"project","value":{"kind":"var","name":"right"}}],"kind":"primitive","operation":"equal","result":{"kind":"bool"}},"right":{"arguments":[{"field":"target","kind":"project","value":{"kind":"var","name":"left"}},{"field":"target","kind":"project","value":{"kind":"var","name":"right"}}],"function":{"name":"precedes"},"kind":"call"}}},"kind":"definition","name":"edgePrecedes","parameters":[{"name":"left","type":{"arguments":[],"kind":"named","member":{"name":"Edge"}}},{"name":"right","type":{"arguments":[],"kind":"named","member":{"name":"Edge"}}}],"result":{"kind":"bool"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"head":{"kind":"var","name":"item"},"kind":"cons","tail":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"nil"}},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"condition":{"arguments":[{"field":"name","kind":"project","value":{"kind":"var","name":"item"}},{"field":"name","kind":"project","value":{"kind":"var","name":"head"}}],"function":{"name":"precedes"},"kind":"call"},"else_value":{"head":{"kind":"var","name":"head"},"kind":"cons","tail":{"arguments":[{"kind":"var","name":"item"},{"kind":"var","name":"rest"}],"function":{"name":"insertNode"},"kind":"call"}},"kind":"if","then_value":{"head":{"kind":"var","name":"item"},"kind":"cons","tail":{"head":{"kind":"var","name":"head"},"kind":"cons","tail":{"kind":"var","name":"rest"}}}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"sorted"}},"kind":"definition","name":"insertNode","parameters":[{"name":"item","type":{"arguments":[],"kind":"named","member":{"name":"Node"}}},{"name":"sorted","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}}],"recursive_argument":"sorted","result":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"nil"},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"arguments":[{"kind":"var","name":"head"},{"arguments":[{"kind":"var","name":"rest"}],"function":{"name":"sortNodes"},"kind":"call"}],"function":{"name":"insertNode"},"kind":"call"},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"items"}},"kind":"definition","name":"sortNodes","parameters":[{"name":"items","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}}],"recursive_argument":"items","result":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"head":{"kind":"var","name":"item"},"kind":"cons","tail":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"nil"}},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"condition":{"arguments":[{"kind":"var","name":"item"},{"kind":"var","name":"head"}],"function":{"name":"edgePrecedes"},"kind":"call"},"else_value":{"head":{"kind":"var","name":"head"},"kind":"cons","tail":{"arguments":[{"kind":"var","name":"item"},{"kind":"var","name":"rest"}],"function":{"name":"insertEdge"},"kind":"call"}},"kind":"if","then_value":{"head":{"kind":"var","name":"item"},"kind":"cons","tail":{"head":{"kind":"var","name":"head"},"kind":"cons","tail":{"kind":"var","name":"rest"}}}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"sorted"}},"kind":"definition","name":"insertEdge","parameters":[{"name":"item","type":{"arguments":[],"kind":"named","member":{"name":"Edge"}}},{"name":"sorted","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}}],"recursive_argument":"sorted","result":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"nil"},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"arguments":[{"kind":"var","name":"head"},{"arguments":[{"kind":"var","name":"rest"}],"function":{"name":"sortEdges"},"kind":"call"}],"function":{"name":"insertEdge"},"kind":"call"},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"items"}},"kind":"definition","name":"sortEdges","parameters":[{"name":"items","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}}],"recursive_argument":"items","result":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"head":{"kind":"var","name":"item"},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"condition":{"arguments":[{"kind":"var","name":"item"},{"kind":"var","name":"head"}],"function":{"name":"precedes"},"kind":"call"},"else_value":{"head":{"kind":"var","name":"head"},"kind":"cons","tail":{"arguments":[{"kind":"var","name":"item"},{"kind":"var","name":"rest"}],"function":{"name":"insertName"},"kind":"call"}},"kind":"if","then_value":{"head":{"kind":"var","name":"item"},"kind":"cons","tail":{"head":{"kind":"var","name":"head"},"kind":"cons","tail":{"kind":"var","name":"rest"}}}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"sorted"}},"kind":"definition","name":"insertName","parameters":[{"name":"item","type":{"kind":"string"}},{"name":"sorted","type":{"element":{"kind":"string"},"kind":"list"}}],"recursive_argument":"sorted","result":{"element":{"kind":"string"},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"element":{"kind":"string"},"kind":"nil"},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"arguments":[{"kind":"var","name":"head"},{"arguments":[{"kind":"var","name":"rest"}],"function":{"name":"sortNames"},"kind":"call"}],"function":{"name":"insertName"},"kind":"call"},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"items"}},"kind":"definition","name":"sortNames","parameters":[{"name":"items","type":{"element":{"kind":"string"},"kind":"list"}}],"recursive_argument":"items","result":{"element":{"kind":"string"},"kind":"list"}},{"axioms":["Classical.choice","Quot.sound","propext"],"body":{"arguments":[{"head":{"kind":"string","value":"node"},"kind":"cons","tail":{"head":{"field":"name","kind":"project","value":{"kind":"var","name":"node"}},"kind":"cons","tail":{"head":{"arguments":[{"field":"kind","kind":"project","value":{"kind":"var","name":"node"}}],"function":{"name":"kindName"},"kind":"call"},"kind":"cons","tail":{"head":{"arguments":[{"field":"memory","kind":"project","value":{"kind":"var","name":"node"}}],"kind":"primitive","operation":"format_decimal","result":{"kind":"string"}},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}}}}},{"kind":"string","value":" "}],"kind":"primitive","operation":"join","result":{"kind":"string"}},"kind":"definition","name":"nodeLine","parameters":[{"name":"node","type":{"arguments":[],"kind":"named","member":{"name":"Node"}}}],"result":{"kind":"string"}},{"axioms":["propext"],"body":{"arguments":[{"head":{"kind":"string","value":"edge"},"kind":"cons","tail":{"head":{"field":"source","kind":"project","value":{"kind":"var","name":"edge"}},"kind":"cons","tail":{"head":{"field":"target","kind":"project","value":{"kind":"var","name":"edge"}},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}}}},{"kind":"string","value":" "}],"kind":"primitive","operation":"join","result":{"kind":"string"}},"kind":"definition","name":"edgeLine","parameters":[{"name":"edge","type":{"arguments":[],"kind":"named","member":{"name":"Edge"}}}],"result":{"kind":"string"}},{"axioms":["propext"],"body":{"arguments":[{"head":{"kind":"string","value":"pii"},"kind":"cons","tail":{"head":{"kind":"var","name":"name"},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}}},{"kind":"string","value":" "}],"kind":"primitive","operation":"join","result":{"kind":"string"}},"kind":"definition","name":"piiLine","parameters":[{"name":"name","type":{"kind":"string"}}],"result":{"kind":"string"}},{"axioms":["Classical.choice","Quot.sound","propext"],"body":{"branches":[{"binders":[],"body":{"element":{"kind":"string"},"kind":"nil"},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"head":{"arguments":[{"kind":"var","name":"head"}],"function":{"name":"nodeLine"},"kind":"call"},"kind":"cons","tail":{"arguments":[{"kind":"var","name":"rest"}],"function":{"name":"nodeLines"},"kind":"call"}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"items"}},"kind":"definition","name":"nodeLines","parameters":[{"name":"items","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Node"}},"kind":"list"}}],"recursive_argument":"items","result":{"element":{"kind":"string"},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"element":{"kind":"string"},"kind":"nil"},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"head":{"arguments":[{"kind":"var","name":"head"}],"function":{"name":"edgeLine"},"kind":"call"},"kind":"cons","tail":{"arguments":[{"kind":"var","name":"rest"}],"function":{"name":"edgeLines"},"kind":"call"}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"items"}},"kind":"definition","name":"edgeLines","parameters":[{"name":"items","type":{"element":{"arguments":[],"kind":"named","member":{"name":"Edge"}},"kind":"list"}}],"recursive_argument":"items","result":{"element":{"kind":"string"},"kind":"list"}},{"axioms":["propext"],"body":{"branches":[{"binders":[],"body":{"element":{"kind":"string"},"kind":"nil"},"constructor":{"name":"List.nil"}},{"binders":["head","rest"],"body":{"head":{"arguments":[{"kind":"var","name":"head"}],"function":{"name":"piiLine"},"kind":"call"},"kind":"cons","tail":{"arguments":[{"kind":"var","name":"rest"}],"function":{"name":"piiLines"},"kind":"call"}},"constructor":{"name":"List.cons"}}],"kind":"match","scrutinee":{"kind":"var","name":"items"}},"kind":"definition","name":"piiLines","parameters":[{"name":"items","type":{"element":{"kind":"string"},"kind":"list"}}],"recursive_argument":"items","result":{"element":{"kind":"string"},"kind":"list"}},{"axioms":["Classical.choice","Quot.sound","propext"],"body":{"arguments":[{"branches":[{"binders":[],"body":{"element":{"kind":"string"},"kind":"nil"},"constructor":{"name":"Option.none"}},{"binders":["limit"],"body":{"head":{"arguments":[{"head":{"kind":"string","value":"policy"},"kind":"cons","tail":{"head":{"kind":"string","value":"memory"},"kind":"cons","tail":{"head":{"arguments":[{"kind":"var","name":"limit"}],"kind":"primitive","operation":"format_decimal","result":{"kind":"string"}},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}}}},{"kind":"string","value":" "}],"kind":"primitive","operation":"join","result":{"kind":"string"}},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}},"constructor":{"name":"Option.some"}}],"kind":"match","scrutinee":{"field":"memoryLimit","kind":"project","value":{"kind":"var","name":"policies"}}},{"condition":{"field":"piiEncryption","kind":"project","value":{"kind":"var","name":"policies"}},"else_value":{"element":{"kind":"string"},"kind":"nil"},"kind":"if","then_value":{"head":{"kind":"string","value":"policy encrypt-pii"},"kind":"cons","tail":{"element":{"kind":"string"},"kind":"nil"}}}],"kind":"primitive","operation":"append","result":{"element":{"kind":"string"},"kind":"list"}},"kind":"definition","name":"policyLines","parameters":[{"name":"policies","type":{"arguments":[],"kind":"named","member":{"name":"Policies"}}}],"result":{"element":{"kind":"string"},"kind":"list"}},{"axioms":["Classical.choice","Quot.sound","propext"],"body":{"head":{"kind":"string","value":"prism-coder/1"},"kind":"cons","tail":{"arguments":[{"arguments":[{"field":"policies","kind":"project","value":{"kind":"var","name":"project"}}],"function":{"name":"policyLines"},"kind":"call"},{"arguments":[{"arguments":[{"arguments":[{"field":"nodes","kind":"project","value":{"kind":"var","name":"project"}}],"function":{"name":"sortNodes"},"kind":"call"}],"function":{"name":"nodeLines"},"kind":"call"},{"arguments":[{"arguments":[{"arguments":[{"field":"pii","kind":"project","value":{"kind":"var","name":"project"}}],"function":{"name":"sortNames"},"kind":"call"}],"function":{"name":"piiLines"},"kind":"call"},{"arguments":[{"arguments":[{"field":"edges","kind":"project","value":{"kind":"var","name":"project"}}],"function":{"name":"sortEdges"},"kind":"call"}],"function":{"name":"edgeLines"},"kind":"call"}],"kind":"primitive","operation":"append","result":{"element":{"kind":"string"},"kind":"list"}}],"kind":"primitive","operation":"append","result":{"element":{"kind":"string"},"kind":"list"}}],"kind":"primitive","operation":"append","result":{"element":{"kind":"string"},"kind":"list"}}},"kind":"definition","name":"canonicalLines","parameters":[{"name":"project","type":{"arguments":[],"kind":"named","member":{"name":"Project"}}}],"result":{"element":{"kind":"string"},"kind":"list"}}],"spec":"lexlean/semantic-module/1"}}
+inductive{
+  name: NodeKind,
+  type_parameters: [],
+  parameters: [],
+  constructors: [
+    {name: Input, fields: []},
+    {name: Operator, fields: []},
+    {name: Encrypt, fields: []},
+    {name: Output, fields: []}
+  ]
+}
+
+structure{
+  name: Node,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: name, type: String}, {name: kind, type: NodeKind}, {name: memory, type: UInt64}]
+}
+
+structure{
+  name: Edge,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: source, type: String}, {name: target, type: String}]
+}
+
+structure{
+  name: Policies,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: memoryLimit, type: (Option UInt64)}, {name: piiEncryption, type: Bool}]
+}
+
+structure{
+  name: Project,
+  type_parameters: [],
+  parameters: [],
+  fields: [
+    {name: policies, type: Policies},
+    {name: nodes, type: (List Node)},
+    {name: edges, type: (List Edge)},
+    {name: pii, type: (List String)}
+  ]
+}
+
+inductive{
+  name: Violation,
+  type_parameters: [],
+  parameters: [],
+  constructors: [
+    {name: DuplicateNode, fields: []},
+    {name: UnknownNode, fields: []},
+    {name: SelfEdge, fields: []},
+    {name: DuplicateEdge, fields: []},
+    {name: OutputSource, fields: []},
+    {name: InputTarget, fields: []},
+    {name: NotAnInput, fields: []},
+    {name: DuplicatePii, fields: []},
+    {name: DuplicatePolicy, fields: []}
+  ]
+}
+
+inductive{
+  name: Admission,
+  type_parameters: [],
+  parameters: [],
+  constructors: [{name: Admit, fields: []}, {name: Refuse, fields: [Violation]}]
+}
+
+definition{
+  name: admits,
+  parameters: [admission : Admission],
+  result: Bool,
+  body: (match admission | Admission.Admit => true | Admission.Refuse violation => false)
+}
+
+definition{
+  name: gate,
+  parameters: [admission : Admission, candidate : Project],
+  result: (Result Project Violation),
+  body: (match admission
+    | Admission.Admit => (ctor Result.ok [Project, Violation] candidate)
+    | Admission.Refuse violation => (ctor Result.error [Project, Violation] violation))
+}
+
+definition{
+  name: admitted,
+  parameters: [outcome : (Result Project Violation)],
+  result: Bool,
+  body: match{
+    branches: [
+      {body: false, binders: [violation], constructor: Result.error},
+      {body: true, binders: [project], constructor: Result.ok}
+    ],
+    scrutinee: outcome
+  }
+}
+
+theorem{
+  name: gateAdmitsExactly,
+  parameters: [admission : Admission, candidate : Project],
+  statement: ((admitted (gate admission candidate)) = (admits admission)),
+  proof: cases{
+    branches: [
+      {proof: reflexivity{}, binders: [], constructor: Admit},
+      {proof: reflexivity{}, binders: [violation], constructor: Refuse}
+    ],
+    scrutinee: admission
+  }
+}
+
+definition{
+  name: emptyProject,
+  parameters: [],
+  result: Project,
+  body: (record Project {policies := (record Policies {memoryLimit := (ctor Option.none [UInt64]), piiEncryption := false}), nodes := (nil Node), edges := (nil Edge), pii := (nil String)})
+}
+
+definition{
+  name: kindName,
+  parameters: [kind : NodeKind],
+  result: String,
+  body: (match kind
+    | NodeKind.Input => "input"
+    | NodeKind.Operator => "operator"
+    | NodeKind.Encrypt => "encrypt"
+    | NodeKind.Output => "output")
+}
+
+definition{
+  name: parseKind,
+  parameters: [text : String],
+  result: (Option NodeKind),
+  body: (if (prim equal text "input" : Bool) then (ctor Option.some [NodeKind] (ctor NodeKind.Input)) else (if (prim equal text "operator" : Bool) then (ctor Option.some [NodeKind] (ctor NodeKind.Operator)) else (if (prim equal text "encrypt" : Bool) then (ctor Option.some [NodeKind] (ctor NodeKind.Encrypt)) else (if (prim equal text "output" : Bool) then (ctor Option.some [NodeKind] (ctor NodeKind.Output)) else (ctor Option.none [NodeKind])))))
+}
+
+definition{
+  name: isInput,
+  parameters: [kind : NodeKind],
+  result: Bool,
+  body: (match kind
+    | NodeKind.Input => true
+    | NodeKind.Operator => false
+    | NodeKind.Encrypt => false
+    | NodeKind.Output => false)
+}
+
+definition{
+  name: isOperator,
+  parameters: [kind : NodeKind],
+  result: Bool,
+  body: (match kind
+    | NodeKind.Input => false
+    | NodeKind.Operator => true
+    | NodeKind.Encrypt => false
+    | NodeKind.Output => false)
+}
+
+definition{
+  name: isEncrypt,
+  parameters: [kind : NodeKind],
+  result: Bool,
+  body: (match kind
+    | NodeKind.Input => false
+    | NodeKind.Operator => false
+    | NodeKind.Encrypt => true
+    | NodeKind.Output => false)
+}
+
+definition{
+  name: isOutput,
+  parameters: [kind : NodeKind],
+  result: Bool,
+  body: (match kind
+    | NodeKind.Input => false
+    | NodeKind.Operator => false
+    | NodeKind.Encrypt => false
+    | NodeKind.Output => true)
+}
+
+definition{
+  name: findNode,
+  parameters: [nodes : (List Node), name : String],
+  result: (Option Node),
+  body: (match nodes
+    | List.nil => (ctor Option.none [Node])
+    | List.cons head rest => (if (prim equal (project head name) name : Bool) then (ctor Option.some [Node] head) else (findNode rest name))),
+  recursive_argument: nodes
+}
+
+definition{
+  name: hasNode,
+  parameters: [project : Project, name : String],
+  result: Bool,
+  body: (match (findNode (project var{name: project} nodes) name)
+    | Option.none => false
+    | Option.some node => true)
+}
+
+definition{
+  name: listsName,
+  parameters: [names : (List String), name : String],
+  result: Bool,
+  body: (match names
+    | List.nil => false
+    | List.cons head rest => (if (prim equal head name : Bool) then true else (listsName rest name))),
+  recursive_argument: names
+}
+
+definition{
+  name: hasEdge,
+  parameters: [edges : (List Edge), source : String, target : String],
+  result: Bool,
+  body: (match edges
+    | List.nil => false
+    | List.cons head rest => (if ((prim equal (project head source) source : Bool) && (prim equal (project head target) target : Bool)) then true else (hasEdge rest source target))),
+  recursive_argument: edges
+}
+
+definition{
+  name: precedes,
+  parameters: [left : String, right : String],
+  result: Bool,
+  body: (prim equal (prim compare_bytes (prim utf8_encode left : Bytes) (prim utf8_encode right : Bytes) : Ordering) (prim compare_bytes 0x 0x00 : Ordering) : Bool),
+  axioms: [propext]
+}
+
+definition{
+  name: edgePrecedes,
+  parameters: [left : Edge, right : Edge],
+  result: Bool,
+  body: ((precedes (project left source) (project right source)) || ((prim equal (project left source) (project right source) : Bool) && (precedes (project left target) (project right target)))),
+  axioms: [propext]
+}
+
+definition{
+  name: insertNode,
+  parameters: [item : Node, sorted : (List Node)],
+  result: (List Node),
+  body: (match sorted
+    | List.nil => (cons item (nil Node))
+    | List.cons head rest => (if (precedes (project item name) (project head name)) then (cons item (cons head rest)) else (cons head (insertNode item rest)))),
+  axioms: [propext],
+  recursive_argument: sorted
+}
+
+definition{
+  name: sortNodes,
+  parameters: [items : (List Node)],
+  result: (List Node),
+  body: (match items
+    | List.nil => (nil Node)
+    | List.cons head rest => (insertNode head (sortNodes rest))),
+  axioms: [propext],
+  recursive_argument: items
+}
+
+definition{
+  name: insertEdge,
+  parameters: [item : Edge, sorted : (List Edge)],
+  result: (List Edge),
+  body: (match sorted
+    | List.nil => (cons item (nil Edge))
+    | List.cons head rest => (if (edgePrecedes item head) then (cons item (cons head rest)) else (cons head (insertEdge item rest)))),
+  axioms: [propext],
+  recursive_argument: sorted
+}
+
+definition{
+  name: sortEdges,
+  parameters: [items : (List Edge)],
+  result: (List Edge),
+  body: (match items
+    | List.nil => (nil Edge)
+    | List.cons head rest => (insertEdge head (sortEdges rest))),
+  axioms: [propext],
+  recursive_argument: items
+}
+
+definition{
+  name: insertName,
+  parameters: [item : String, sorted : (List String)],
+  result: (List String),
+  body: (match sorted
+    | List.nil => (cons item (nil String))
+    | List.cons head rest => (if (precedes item head) then (cons item (cons head rest)) else (cons head (insertName item rest)))),
+  axioms: [propext],
+  recursive_argument: sorted
+}
+
+definition{
+  name: sortNames,
+  parameters: [items : (List String)],
+  result: (List String),
+  body: (match items
+    | List.nil => (nil String)
+    | List.cons head rest => (insertName head (sortNames rest))),
+  axioms: [propext],
+  recursive_argument: items
+}
+
+definition{
+  name: nodeLine,
+  parameters: [node : Node],
+  result: String,
+  body: (prim join (cons "node" (cons (project node name) (cons (kindName (project node kind)) (cons (prim format_decimal (project node memory) : String) (nil String))))) " " : String),
+  axioms: [Classical.choice, Quot.sound, propext]
+}
+
+definition{
+  name: edgeLine,
+  parameters: [edge : Edge],
+  result: String,
+  body: (prim join (cons "edge" (cons (project edge source) (cons (project edge target) (nil String)))) " " : String),
+  axioms: [propext]
+}
+
+definition{
+  name: piiLine,
+  parameters: [name : String],
+  result: String,
+  body: (prim join (cons "pii" (cons name (nil String))) " " : String),
+  axioms: [propext]
+}
+
+definition{
+  name: nodeLines,
+  parameters: [items : (List Node)],
+  result: (List String),
+  body: (match items
+    | List.nil => (nil String)
+    | List.cons head rest => (cons (nodeLine head) (nodeLines rest))),
+  axioms: [Classical.choice, Quot.sound, propext],
+  recursive_argument: items
+}
+
+definition{
+  name: edgeLines,
+  parameters: [items : (List Edge)],
+  result: (List String),
+  body: (match items
+    | List.nil => (nil String)
+    | List.cons head rest => (cons (edgeLine head) (edgeLines rest))),
+  axioms: [propext],
+  recursive_argument: items
+}
+
+definition{
+  name: piiLines,
+  parameters: [items : (List String)],
+  result: (List String),
+  body: (match items
+    | List.nil => (nil String)
+    | List.cons head rest => (cons (piiLine head) (piiLines rest))),
+  axioms: [propext],
+  recursive_argument: items
+}
+
+definition{
+  name: policyLines,
+  parameters: [policies : Policies],
+  result: (List String),
+  body: (prim append (match (project policies memoryLimit)
+    | Option.none => (nil String)
+    | Option.some limit => (cons (prim join (cons "policy" (cons "memory" (cons (prim format_decimal limit : String) (nil String)))) " " : String) (nil String))) (if (project policies piiEncryption) then (cons "policy encrypt-pii" (nil String)) else (nil String)) : (List String)),
+  axioms: [Classical.choice, Quot.sound, propext]
+}
+
+definition{
+  name: canonicalLines,
+  parameters: [project : Project],
+  result: (List String),
+  body: (cons "prism-coder/1" (prim append (policyLines (project var{
+    name: project
+  } policies)) (prim append (nodeLines (sortNodes (project var{
+    name: project
+  } nodes))) (prim append (piiLines (sortNames (project var{
+    name: project
+  } pii))) (edgeLines (sortEdges (project var{
+    name: project
+  } edges))) : (List String)) : (List String)) : (List String))),
+  axioms: [Classical.choice, Quot.sound, propext]
+}
 \end{semanticmodule}
 \end{lexlean}
