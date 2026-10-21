@@ -1,6 +1,6 @@
-name = "PrismCoder"
+name = "PrismCode"
 version = "0.1.0"
-defaultTargets = ["PrismCoder"]
+defaultTargets = ["PrismCode"]
 
 [[lean_lib]]
-name = "PrismCoder"
+name = "PrismCode"

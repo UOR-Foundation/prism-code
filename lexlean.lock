@@ -1,16 +1,16 @@
 spec = "lexlean/lock/2"
 language = "1.2"
 compiler_semantics = "5262e5b4c8b5668ae7066ad686757a6bb7f80c941d515fb9d586894fbc7de69a"
-project_config_sha256 = "718f739bafd7f2dff588071594782f2ef31f2a00a3c5da09f4a28bdf4d7d52b0"
+project_config_sha256 = "b2392b44c8b49e14355bb6d6269bdb6a20704aaf04bad4fdd0f81f7b05547a02"
 lean_toolchain = "leanprover/lean4:v4.32.1"
 
 [[workspace_file]]
 path = "lake-manifest.json"
-sha256 = "cdecc4be0ccc5bda9850f0af1e0fa18f6e3ef216ab4f9f9cb9d60314c09d9023"
+sha256 = "b4a990dd4cc56c39d78b4bb031f034efd81a0fab124c8b731c800a605cd1839c"
 
 [[workspace_file]]
 path = "lakefile.toml"
-sha256 = "8db504c08886f0967fdf3cd58a11bac8dff45003b60b221e53a667847993bcab"
+sha256 = "16fb6f38ec49f33fdf57176ff809058b19a44611031428e4e17c6aa205d8ffce"
 
 [[workspace_file]]
 path = "lean-toolchain"
@@ -52,6 +52,6 @@ version = "1.0.0"
 kind = "path"
 source = "language/prism.arch"
 revision = "none"
-tree_sha256 = "5d112f52e4c72ceb84f51b9ea1901d5749a3acab07d51a7c5ab39cf8ba79ea7c"
+tree_sha256 = "b20a8bc1a49120a95491ba90eb53222676da9b53c63d33b08d1393b1d0f85a84"
 manifest_sha256 = "14c95df8b512edacacdb1788b58ae90cf573b4e3f1dca0e41074bfde5a380c9f"
 imports = ["lexlean.core@1.2.0", "lexlean.std.bool@1.2.0", "lexlean.std.nat@1.2.0"]

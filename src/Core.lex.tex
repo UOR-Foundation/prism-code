@@ -1,7 +1,8 @@
 \begin{lexlean}{Core}
 \useglossary{lexlean.std.bool@1.2.0}
 \useglossary{lexlean.std.nat@1.2.0}
-\title{Boolean}
+\useglossary{prism.arch@1.0.0}
+\title{Prism dataflow project}
 \begin{semanticmodule}
 inductive{
   name: NodeKind,
@@ -375,7 +376,7 @@ definition{
   name: canonicalLines,
   parameters: [project : Project],
   result: (List String),
-  body: (cons "prism-coder/1" (prim append (policyLines (project var{
+  body: (cons "prism-code/1" (prim append (policyLines (project var{
     name: project
   } policies)) (prim append (nodeLines (sortNodes (project var{
     name: project
