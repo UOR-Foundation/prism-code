@@ -18,6 +18,12 @@ on:
 
 permissions: {}
 
+# One proposal at a time: a newer dispatch supersedes an older one, so two runs
+# never race to rewrite the automation/template-contract-update branch.
+concurrency:
+  group: template-update
+  cancel-in-progress: true
+
 jobs:
   proposal:
     name: generate the proposal without write credentials
