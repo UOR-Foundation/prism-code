@@ -626,21 +626,21 @@ definition{
   name: componentTable,
   parameters: [],
   result: (List IdEntry),
-  body: (cons (record IdEntry {index := 0, id := "Architecture::componentProjectAuthor"}) (cons (record IdEntry {index := 1, id := "Architecture::componentBrowserRuntime"}) (cons (record IdEntry {index := 2, id := "Architecture::componentPagesTarget"}) (cons (record IdEntry {index := 3, id := "Architecture::componentCoreWasmGuest"}) (cons (record IdEntry {index := 4, id := "Architecture::componentBrowserView"}) (cons (record IdEntry {index := 5, id := "Architecture::componentCliAdapter"}) (cons (record IdEntry {index := 6, id := "Architecture::componentReleaseBinaries"}) (nil IdEntry))))))))
+  body: (cons (record IdEntry {index := 0, id := "Architecture::componentBrowserRuntime"}) (cons (record IdEntry {index := 1, id := "Architecture::componentBrowserView"}) (cons (record IdEntry {index := 2, id := "Architecture::componentCliAdapter"}) (cons (record IdEntry {index := 3, id := "Architecture::componentCoreWasmGuest"}) (cons (record IdEntry {index := 4, id := "Architecture::componentPagesTarget"}) (cons (record IdEntry {index := 5, id := "Architecture::componentProjectAuthor"}) (cons (record IdEntry {index := 6, id := "Architecture::componentReleaseBinaries"}) (nil IdEntry))))))))
 }
 
 definition{
   name: edgeTable,
   parameters: [],
   result: (List IdEntry),
-  body: (cons (record IdEntry {index := 0, id := "Architecture::edgeAuthorBrowser"}) (cons (record IdEntry {index := 1, id := "Architecture::edgePagesBrowser"}) (cons (record IdEntry {index := 2, id := "Architecture::edgeAuthorCli"}) (cons (record IdEntry {index := 3, id := "Architecture::edgeBrowserHostsView"}) (cons (record IdEntry {index := 4, id := "Architecture::edgeViewRequest"}) (cons (record IdEntry {index := 5, id := "Architecture::edgeViewResponse"}) (cons (record IdEntry {index := 6, id := "Architecture::edgeCliRequest"}) (cons (record IdEntry {index := 7, id := "Architecture::edgeCliResponse"}) (cons (record IdEntry {index := 8, id := "Architecture::edgeBinariesShipCli"}) (cons (record IdEntry {index := 9, id := "Architecture::edgePagesServeView"}) (nil IdEntry)))))))))))
+  body: (cons (record IdEntry {index := 0, id := "Architecture::edgeAuthorBrowser"}) (cons (record IdEntry {index := 1, id := "Architecture::edgeAuthorCli"}) (cons (record IdEntry {index := 2, id := "Architecture::edgeBinariesShipCli"}) (cons (record IdEntry {index := 3, id := "Architecture::edgeBrowserHostsView"}) (cons (record IdEntry {index := 4, id := "Architecture::edgeCliRequest"}) (cons (record IdEntry {index := 5, id := "Architecture::edgeCliResponse"}) (cons (record IdEntry {index := 6, id := "Architecture::edgePagesBrowser"}) (cons (record IdEntry {index := 7, id := "Architecture::edgePagesServeView"}) (cons (record IdEntry {index := 8, id := "Architecture::edgeViewRequest"}) (cons (record IdEntry {index := 9, id := "Architecture::edgeViewResponse"}) (nil IdEntry)))))))))))
 }
 
 definition{
   name: viewpointTable,
   parameters: [],
   result: (List IdEntry),
-  body: (cons (record IdEntry {index := 0, id := "Architecture::viewpointContextPrivacy"}) (cons (record IdEntry {index := 1, id := "Architecture::viewpointContextParity"}) (cons (record IdEntry {index := 2, id := "Architecture::viewpointComponentCorrectness"}) (cons (record IdEntry {index := 3, id := "Architecture::viewpointComponentPrivacy"}) (cons (record IdEntry {index := 4, id := "Architecture::viewpointComponentParity"}) (cons (record IdEntry {index := 5, id := "Architecture::viewpointDeploymentAvailability"}) (cons (record IdEntry {index := 6, id := "Architecture::viewpointComponentAudit"}) (nil IdEntry))))))))
+  body: (cons (record IdEntry {index := 0, id := "Architecture::viewpointComponentAudit"}) (cons (record IdEntry {index := 1, id := "Architecture::viewpointComponentCorrectness"}) (cons (record IdEntry {index := 2, id := "Architecture::viewpointComponentParity"}) (cons (record IdEntry {index := 3, id := "Architecture::viewpointComponentPrivacy"}) (cons (record IdEntry {index := 4, id := "Architecture::viewpointContextParity"}) (cons (record IdEntry {index := 5, id := "Architecture::viewpointContextPrivacy"}) (cons (record IdEntry {index := 6, id := "Architecture::viewpointDeploymentAvailability"}) (nil IdEntry))))))))
 }
 
 definition{
