@@ -64,14 +64,14 @@ definition{
   name: standardIso42010,
   parameters: [],
   result: Foundation.Arch::StandardReference,
-  body: (record Foundation.Arch::StandardReference {standardIndex := 42010, editionIndex := 2022})
+  body: (record Foundation.Arch::StandardReference {standardIndex := 4, editionIndex := 0})
 }
 
 definition{
   name: stakeholderAuthorWeb,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 0})
+  body: (record Foundation.Arch::Stakeholder {index := 2})
 }
 
 definition{
@@ -85,63 +85,63 @@ definition{
   name: stakeholderMaintainer,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 2})
+  body: (record Foundation.Arch::Stakeholder {index := 3})
 }
 
 definition{
   name: stakeholderAuditor,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 3})
+  body: (record Foundation.Arch::Stakeholder {index := 0})
 }
 
 definition{
   name: concernCorrectness,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 0})
+  body: (record Foundation.Arch::Concern {index := 1})
 }
 
 definition{
   name: concernPrivacy,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 1})
+  body: (record Foundation.Arch::Concern {index := 3})
 }
 
 definition{
   name: concernAvailability,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 2})
+  body: (record Foundation.Arch::Concern {index := 0})
 }
 
 definition{
   name: concernParity,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 3})
+  body: (record Foundation.Arch::Concern {index := 2})
 }
 
 definition{
   name: componentProjectAuthor,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 0, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
+  body: (record Foundation.Arch::Component {index := 5, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
 }
 
 definition{
   name: componentBrowserRuntime,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 1, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
+  body: (record Foundation.Arch::Component {index := 0, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
 }
 
 definition{
   name: componentPagesTarget,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 2, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
+  body: (record Foundation.Arch::Component {index := 4, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
 }
 
 definition{
@@ -155,14 +155,14 @@ definition{
   name: componentBrowserView,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 4, kind := (ctor Foundation.Arch::ComponentKind.service)})
+  body: (record Foundation.Arch::Component {index := 1, kind := (ctor Foundation.Arch::ComponentKind.service)})
 }
 
 definition{
   name: componentCliAdapter,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 5, kind := (ctor Foundation.Arch::ComponentKind.service)})
+  body: (record Foundation.Arch::Component {index := 2, kind := (ctor Foundation.Arch::ComponentKind.service)})
 }
 
 definition{
@@ -176,140 +176,140 @@ definition{
   name: edgeAuthorBrowser,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 0, fromIndex := 0, toIndex := 1, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 0, fromIndex := 5, toIndex := 0, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgePagesBrowser,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 1, fromIndex := 2, toIndex := 1, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 6, fromIndex := 4, toIndex := 0, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgeAuthorCli,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 2, fromIndex := 0, toIndex := 5, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 1, fromIndex := 5, toIndex := 2, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgeBrowserHostsView,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 3, fromIndex := 1, toIndex := 4, kind := (ctor Foundation.Arch::EdgeKind.controlFlow)})
+  body: (record Foundation.Arch::Edge {index := 3, fromIndex := 0, toIndex := 1, kind := (ctor Foundation.Arch::EdgeKind.controlFlow)})
 }
 
 definition{
   name: edgeViewRequest,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 4, fromIndex := 4, toIndex := 3, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 8, fromIndex := 1, toIndex := 3, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgeViewResponse,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 5, fromIndex := 3, toIndex := 4, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 9, fromIndex := 3, toIndex := 1, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgeCliRequest,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 6, fromIndex := 5, toIndex := 3, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 4, fromIndex := 2, toIndex := 3, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgeCliResponse,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 7, fromIndex := 3, toIndex := 5, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 5, fromIndex := 3, toIndex := 2, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: edgeBinariesShipCli,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 8, fromIndex := 6, toIndex := 5, kind := (ctor Foundation.Arch::EdgeKind.controlFlow)})
+  body: (record Foundation.Arch::Edge {index := 2, fromIndex := 6, toIndex := 2, kind := (ctor Foundation.Arch::EdgeKind.controlFlow)})
 }
 
 definition{
   name: edgePagesServeView,
   parameters: [],
   result: Foundation.Arch::Edge,
-  body: (record Foundation.Arch::Edge {index := 9, fromIndex := 2, toIndex := 4, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
+  body: (record Foundation.Arch::Edge {index := 7, fromIndex := 4, toIndex := 1, kind := (ctor Foundation.Arch::EdgeKind.dataFlow)})
 }
 
 definition{
   name: viewpointContextPrivacy,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 0, stakeholderIndex := 0, concernIndex := 1, modelKindIndex := 1})
+  body: (record Foundation.Arch::Viewpoint {index := 5, stakeholderIndex := 2, concernIndex := 3, modelKindIndex := 1})
 }
 
 definition{
   name: viewpointContextParity,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 1, stakeholderIndex := 1, concernIndex := 3, modelKindIndex := 0})
+  body: (record Foundation.Arch::Viewpoint {index := 4, stakeholderIndex := 1, concernIndex := 2, modelKindIndex := 0})
 }
 
 definition{
   name: viewpointComponentCorrectness,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 2, stakeholderIndex := 2, concernIndex := 0, modelKindIndex := 0})
+  body: (record Foundation.Arch::Viewpoint {index := 1, stakeholderIndex := 3, concernIndex := 1, modelKindIndex := 0})
 }
 
 definition{
   name: viewpointComponentPrivacy,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 3, stakeholderIndex := 3, concernIndex := 1, modelKindIndex := 1})
+  body: (record Foundation.Arch::Viewpoint {index := 3, stakeholderIndex := 0, concernIndex := 3, modelKindIndex := 1})
 }
 
 definition{
   name: viewpointComponentParity,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 4, stakeholderIndex := 2, concernIndex := 3, modelKindIndex := 0})
+  body: (record Foundation.Arch::Viewpoint {index := 2, stakeholderIndex := 3, concernIndex := 2, modelKindIndex := 0})
 }
 
 definition{
   name: viewpointDeploymentAvailability,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 5, stakeholderIndex := 0, concernIndex := 2, modelKindIndex := 0})
+  body: (record Foundation.Arch::Viewpoint {index := 6, stakeholderIndex := 2, concernIndex := 0, modelKindIndex := 0})
 }
 
 definition{
   name: viewpointComponentAudit,
   parameters: [],
   result: Foundation.Arch::Viewpoint,
-  body: (record Foundation.Arch::Viewpoint {index := 6, stakeholderIndex := 3, concernIndex := 0, modelKindIndex := 0})
+  body: (record Foundation.Arch::Viewpoint {index := 0, stakeholderIndex := 0, concernIndex := 1, modelKindIndex := 0})
 }
 
 definition{
   name: viewContextPrivacy,
   parameters: [],
   result: Foundation.Arch::View,
-  body: (record Foundation.Arch::View {index := 0, viewpointIndex := 0, modelKindIndex := 1})
+  body: (record Foundation.Arch::View {index := 5, viewpointIndex := 5, modelKindIndex := 1})
 }
 
 definition{
   name: viewContextParity,
   parameters: [],
   result: Foundation.Arch::View,
-  body: (record Foundation.Arch::View {index := 1, viewpointIndex := 1, modelKindIndex := 0})
+  body: (record Foundation.Arch::View {index := 4, viewpointIndex := 4, modelKindIndex := 0})
 }
 
 definition{
   name: viewComponentCorrectness,
   parameters: [],
   result: Foundation.Arch::View,
-  body: (record Foundation.Arch::View {index := 2, viewpointIndex := 2, modelKindIndex := 0})
+  body: (record Foundation.Arch::View {index := 1, viewpointIndex := 1, modelKindIndex := 0})
 }
 
 definition{
@@ -323,147 +323,147 @@ definition{
   name: viewComponentParity,
   parameters: [],
   result: Foundation.Arch::View,
-  body: (record Foundation.Arch::View {index := 4, viewpointIndex := 4, modelKindIndex := 0})
+  body: (record Foundation.Arch::View {index := 2, viewpointIndex := 2, modelKindIndex := 0})
 }
 
 definition{
   name: viewDeploymentAvailability,
   parameters: [],
   result: Foundation.Arch::View,
-  body: (record Foundation.Arch::View {index := 5, viewpointIndex := 5, modelKindIndex := 0})
+  body: (record Foundation.Arch::View {index := 6, viewpointIndex := 6, modelKindIndex := 0})
 }
 
 definition{
   name: viewComponentAudit,
   parameters: [],
   result: Foundation.Arch::View,
-  body: (record Foundation.Arch::View {index := 6, viewpointIndex := 6, modelKindIndex := 0})
+  body: (record Foundation.Arch::View {index := 0, viewpointIndex := 0, modelKindIndex := 0})
 }
 
 definition{
   name: stakeholders,
   parameters: [],
   result: (List Narrative),
-  body: (cons (record Narrative {index := 0, name := "Project author (web)", text := "Writes a Prism dataflow script and checks it in the browser page."}) (cons (record Narrative {index := 1, name := "Project author (CLI)", text := "Checks the same script from a terminal or a build step with the command-line tool."}) (cons (record Narrative {index := 2, name := "Maintainer", text := "Changes the model and keeps every generated surface in step with it."}) (cons (record Narrative {index := 3, name := "Auditor", text := "Reviews what the checker claims and where the script is processed."}) (nil Narrative)))))
+  body: (cons (record Narrative {index := 0, name := "Auditor", text := "Reviews what the checker claims and where the script is processed."}) (cons (record Narrative {index := 1, name := "Project author (CLI)", text := "Checks the same script from a terminal or a build step with the command-line tool."}) (cons (record Narrative {index := 2, name := "Project author (web)", text := "Writes a Prism dataflow script and checks it in the browser page."}) (cons (record Narrative {index := 3, name := "Maintainer", text := "Changes the model and keeps every generated surface in step with it."}) (nil Narrative)))))
 }
 
 definition{
   name: concerns,
   parameters: [],
   result: (List Narrative),
-  body: (cons (record Narrative {index := 0, name := "Correctness of findings", text := "A script is accepted only if it complies, and every finding names a real violation."}) (cons (record Narrative {index := 1, name := "Privacy of scripts", text := "Nothing leaves the browser or the process: no network, no storage."}) (cons (record Narrative {index := 2, name := "Availability of the page", text := "The page is a static artifact that needs no service beyond its host."}) (cons (record Narrative {index := 3, name := "Parity of web and CLI", text := "The page and the command line give the same response to the same request."}) (nil Narrative)))))
+  body: (cons (record Narrative {index := 0, name := "Availability of the page", text := "The page is a static artifact that needs no service beyond its host."}) (cons (record Narrative {index := 1, name := "Correctness of findings", text := "A script is accepted only if it complies, and every finding names a real violation."}) (cons (record Narrative {index := 2, name := "Parity of web and CLI", text := "The page and the command line give the same response to the same request."}) (cons (record Narrative {index := 3, name := "Privacy of scripts", text := "Nothing leaves the browser or the process: no network, no storage."}) (nil Narrative)))))
 }
 
 definition{
   name: viewpoints,
   parameters: [],
   result: (List Narrative),
-  body: (cons (record Narrative {index := 0, name := "Context for privacy", text := "The system boundary: who and what exchange data with it."}) (cons (record Narrative {index := 1, name := "Context for parity", text := "Both ways in to the system, and what they share."}) (cons (record Narrative {index := 2, name := "Component for correctness", text := "Where the checking behavior lives, and nowhere else."}) (cons (record Narrative {index := 3, name := "Component for privacy", text := "What the checking component is able to do."}) (cons (record Narrative {index := 4, name := "Component for parity", text := "Which component both adapters call."}) (cons (record Narrative {index := 5, name := "Deployment for availability", text := "What serves the page and what ships the binaries."}) (cons (record Narrative {index := 6, name := "Component for audit", text := "The component an auditor reviews for the correctness claims."}) (nil Narrative))))))))
+  body: (cons (record Narrative {index := 0, name := "Component for audit", text := "The component an auditor reviews for the correctness claims."}) (cons (record Narrative {index := 1, name := "Component for correctness", text := "Where the checking behavior lives, and nowhere else."}) (cons (record Narrative {index := 2, name := "Component for parity", text := "Which component both adapters call."}) (cons (record Narrative {index := 3, name := "Component for privacy", text := "What the checking component is able to do."}) (cons (record Narrative {index := 4, name := "Context for parity", text := "Both ways in to the system, and what they share."}) (cons (record Narrative {index := 5, name := "Context for privacy", text := "The system boundary: who and what exchange data with it."}) (cons (record Narrative {index := 6, name := "Deployment for availability", text := "What serves the page and what ships the binaries."}) (nil Narrative))))))))
 }
 
 definition{
   name: components,
   parameters: [],
   result: (List Binding),
-  body: (cons (record Binding {index := 0, name := "Project author", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 1, name := "Browser", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 2, name := "Pages target", anchor := (ctor SystemRef.Target "pages")}) (cons (record Binding {index := 3, name := "Core-Wasm guest", anchor := (ctor SystemRef.Artifact "prism-code-application")}) (cons (record Binding {index := 4, name := "Browser view", anchor := (ctor SystemRef.Component "prism-code-browser")}) (cons (record Binding {index := 5, name := "CLI adapter", anchor := (ctor SystemRef.Undeclared)}) (cons (record Binding {index := 6, name := "Release binaries", anchor := (ctor SystemRef.Undeclared)}) (nil Binding))))))))
+  body: (cons (record Binding {index := 0, name := "Browser", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 1, name := "Browser view", anchor := (ctor SystemRef.Component "prism-code-browser")}) (cons (record Binding {index := 2, name := "CLI adapter", anchor := (ctor SystemRef.Undeclared)}) (cons (record Binding {index := 3, name := "Core-Wasm guest", anchor := (ctor SystemRef.Artifact "prism-code-application")}) (cons (record Binding {index := 4, name := "Pages target", anchor := (ctor SystemRef.Target "pages")}) (cons (record Binding {index := 5, name := "Project author", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 6, name := "Release binaries", anchor := (ctor SystemRef.Undeclared)}) (nil Binding))))))))
 }
 
 definition{
   name: contextComponents,
   parameters: [],
   result: (List Nat),
-  body: (cons 0 (cons 1 (cons 2 (cons 5 (nil Nat)))))
+  body: (cons 0 (cons 2 (cons 4 (cons 5 (nil Nat)))))
 }
 
 definition{
   name: contextEdges,
   parameters: [],
   result: (List Nat),
-  body: (cons 0 (cons 1 (cons 2 (nil Nat))))
+  body: (cons 0 (cons 1 (cons 6 (nil Nat))))
 }
 
 definition{
   name: componentComponents,
   parameters: [],
   result: (List Nat),
-  body: (cons 3 (cons 4 (cons 5 (nil Nat))))
+  body: (cons 1 (cons 2 (cons 3 (nil Nat))))
 }
 
 definition{
   name: componentEdges,
   parameters: [],
   result: (List Nat),
-  body: (cons 4 (cons 5 (cons 6 (cons 7 (nil Nat)))))
+  body: (cons 4 (cons 5 (cons 8 (cons 9 (nil Nat)))))
 }
 
 definition{
   name: deploymentComponents,
   parameters: [],
   result: (List Nat),
-  body: (cons 2 (cons 4 (cons 5 (cons 6 (nil Nat)))))
+  body: (cons 1 (cons 2 (cons 4 (cons 6 (nil Nat)))))
 }
 
 definition{
   name: deploymentEdges,
   parameters: [],
   result: (List Nat),
-  body: (cons 8 (cons 9 (nil Nat)))
+  body: (cons 2 (cons 7 (nil Nat)))
 }
 
 definition{
   name: viewSpecs,
   parameters: [],
   result: (List ViewSpec),
-  body: (cons (record ViewSpec {view := 0, kind := "context", components := (contextComponents), edges := (contextEdges)}) (cons (record ViewSpec {view := 1, kind := "context", components := (contextComponents), edges := (contextEdges)}) (cons (record ViewSpec {view := 2, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 3, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 4, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 5, kind := "deployment", components := (deploymentComponents), edges := (deploymentEdges)}) (cons (record ViewSpec {view := 6, kind := "component", components := (componentComponents), edges := (componentEdges)}) (nil ViewSpec))))))))
+  body: (cons (record ViewSpec {view := 0, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 1, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 2, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 3, kind := "component", components := (componentComponents), edges := (componentEdges)}) (cons (record ViewSpec {view := 4, kind := "context", components := (contextComponents), edges := (contextEdges)}) (cons (record ViewSpec {view := 5, kind := "context", components := (contextComponents), edges := (contextEdges)}) (cons (record ViewSpec {view := 6, kind := "deployment", components := (deploymentComponents), edges := (deploymentEdges)}) (nil ViewSpec))))))))
 }
 
 definition{
   name: correspondences,
   parameters: [],
   result: (List Correspondence),
-  body: (cons (record Correspondence {concern := 0, view := 2, claim := (record Claim {module := "Engine", name := "completedRunAcceptedOnlyIfCompliant", kind := "theorem"})}) (cons (record Correspondence {concern := 0, view := 2, claim := (record Claim {module := "Engine", name := "failedRunNeverAccepted", kind := "theorem"})}) (cons (record Correspondence {concern := 0, view := 6, claim := (record Claim {module := "Engine", name := "certifyWithAcceptsExactly", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 0, claim := (record Claim {module := "System", name := "prismCodeSystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 3, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 2, view := 5, claim := (record Claim {module := "System", name := "prismCodeSystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 1, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 3, view := 4, claim := (record Claim {module := "Specification", name := "dispatch", kind := "definition"})}) (nil Correspondence)))))))))
+  body: (cons (record Correspondence {concern := 1, view := 1, claim := (record Claim {module := "Engine", name := "completedRunAcceptedOnlyIfCompliant", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 1, claim := (record Claim {module := "Engine", name := "failedRunNeverAccepted", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 0, claim := (record Claim {module := "Engine", name := "certifyWithAcceptsExactly", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 5, claim := (record Claim {module := "System", name := "prismCodeSystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 3, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 0, view := 6, claim := (record Claim {module := "System", name := "prismCodeSystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 2, view := 4, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 2, view := 2, claim := (record Claim {module := "Specification", name := "dispatch", kind := "definition"})}) (nil Correspondence)))))))))
 }
 
 definition{
   name: stakeholderRecords,
   parameters: [],
   result: (List Foundation.Arch::Stakeholder),
-  body: (cons (stakeholderAuthorWeb) (cons (stakeholderAuthorCli) (cons (stakeholderMaintainer) (cons (stakeholderAuditor) (nil Foundation.Arch::Stakeholder)))))
+  body: (cons (stakeholderAuditor) (cons (stakeholderAuthorCli) (cons (stakeholderAuthorWeb) (cons (stakeholderMaintainer) (nil Foundation.Arch::Stakeholder)))))
 }
 
 definition{
   name: concernRecords,
   parameters: [],
   result: (List Foundation.Arch::Concern),
-  body: (cons (concernCorrectness) (cons (concernPrivacy) (cons (concernAvailability) (cons (concernParity) (nil Foundation.Arch::Concern)))))
+  body: (cons (concernAvailability) (cons (concernCorrectness) (cons (concernParity) (cons (concernPrivacy) (nil Foundation.Arch::Concern)))))
 }
 
 definition{
   name: componentRecords,
   parameters: [],
   result: (List Foundation.Arch::Component),
-  body: (cons (componentProjectAuthor) (cons (componentBrowserRuntime) (cons (componentPagesTarget) (cons (componentCoreWasmGuest) (cons (componentBrowserView) (cons (componentCliAdapter) (cons (componentReleaseBinaries) (nil Foundation.Arch::Component))))))))
+  body: (cons (componentBrowserRuntime) (cons (componentBrowserView) (cons (componentCliAdapter) (cons (componentCoreWasmGuest) (cons (componentPagesTarget) (cons (componentProjectAuthor) (cons (componentReleaseBinaries) (nil Foundation.Arch::Component))))))))
 }
 
 definition{
   name: edgeRecords,
   parameters: [],
   result: (List Foundation.Arch::Edge),
-  body: (cons (edgeAuthorBrowser) (cons (edgePagesBrowser) (cons (edgeAuthorCli) (cons (edgeBrowserHostsView) (cons (edgeViewRequest) (cons (edgeViewResponse) (cons (edgeCliRequest) (cons (edgeCliResponse) (cons (edgeBinariesShipCli) (cons (edgePagesServeView) (nil Foundation.Arch::Edge)))))))))))
+  body: (cons (edgeAuthorBrowser) (cons (edgeAuthorCli) (cons (edgeBinariesShipCli) (cons (edgeBrowserHostsView) (cons (edgeCliRequest) (cons (edgeCliResponse) (cons (edgePagesBrowser) (cons (edgePagesServeView) (cons (edgeViewRequest) (cons (edgeViewResponse) (nil Foundation.Arch::Edge)))))))))))
 }
 
 definition{
   name: viewpointRecords,
   parameters: [],
   result: (List Foundation.Arch::Viewpoint),
-  body: (cons (viewpointContextPrivacy) (cons (viewpointContextParity) (cons (viewpointComponentCorrectness) (cons (viewpointComponentPrivacy) (cons (viewpointComponentParity) (cons (viewpointDeploymentAvailability) (cons (viewpointComponentAudit) (nil Foundation.Arch::Viewpoint))))))))
+  body: (cons (viewpointComponentAudit) (cons (viewpointComponentCorrectness) (cons (viewpointComponentParity) (cons (viewpointComponentPrivacy) (cons (viewpointContextParity) (cons (viewpointContextPrivacy) (cons (viewpointDeploymentAvailability) (nil Foundation.Arch::Viewpoint))))))))
 }
 
 definition{
   name: viewRecords,
   parameters: [],
   result: (List Foundation.Arch::View),
-  body: (cons (viewContextPrivacy) (cons (viewContextParity) (cons (viewComponentCorrectness) (cons (viewComponentPrivacy) (cons (viewComponentParity) (cons (viewDeploymentAvailability) (cons (viewComponentAudit) (nil Foundation.Arch::View))))))))
+  body: (cons (viewComponentAudit) (cons (viewComponentCorrectness) (cons (viewComponentParity) (cons (viewComponentPrivacy) (cons (viewContextParity) (cons (viewContextPrivacy) (cons (viewDeploymentAvailability) (nil Foundation.Arch::View))))))))
 }
 
 definition{
