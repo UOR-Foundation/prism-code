@@ -7,6 +7,7 @@
 \importmodule{Engine}
 \importmodule{Foundation.View.Text.V1.Model}
 \importmodule{Foundation.View.Text.V3.Model}
+\importmodule{Guide}
 \importmodule{Interaction}
 \importmodule{Specification}
 \title{Prism-code workbench guidance}
@@ -220,7 +221,7 @@ definition{
   name: statusTexts,
   parameters: [],
   result: (List StatusText),
-  body: (cons (record StatusText {name := "checking", text := "Checking the project script."}) (cons (record StatusText {name := "accepted", text := "Accepted: the project meets its policies. The canonical project follows."}) (cons (record StatusText {name := "rejected", text := "Rejected: the project breaks a policy. Each finding names the node and the policy it breaks; the canonical project follows."}) (cons (record StatusText {name := "error", text := "Error: the script could not be checked. The report names the first failing line and its code; the fix for that code is listed under error and finding codes."}) (nil StatusText)))))
+  body: (cons (record StatusText {name := "checking", text := (Guide::checkingText)}) (cons (record StatusText {name := "accepted", text := (Guide::acceptedText)}) (cons (record StatusText {name := "rejected", text := (Guide::rejectedText)}) (cons (record StatusText {name := "error", text := (Guide::errorText)}) (nil StatusText)))))
 }
 
 definition{
@@ -421,6 +422,60 @@ definition{
   recursive_argument: vectors
 }
 
+definition{
+  name: recoveryHint,
+  parameters: [entry : Recovery],
+  result: Foundation.View.Text.V3.Model::ErrorHint,
+  body: (record Foundation.View.Text.V3.Model::ErrorHint {code := (project entry code), title := (project entry code), explanation := (project entry explanation), recovery := (project entry fix), fields := (nil String)})
+}
+
+definition{
+  name: recoveryHints,
+  parameters: [entries : (List Recovery)],
+  result: (List Foundation.View.Text.V3.Model::ErrorHint),
+  body: (match entries
+    | List.nil => (nil Foundation.View.Text.V3.Model::ErrorHint)
+    | List.cons head rest => (cons (recoveryHint head) (recoveryHints rest))),
+  recursive_argument: entries
+}
+
+definition{
+  name: formSection,
+  parameters: [identity : String, form : StatementForm],
+  result: Foundation.View.Text.V3.Model::Section,
+  body: (record Foundation.View.Text.V3.Model::Section {id := identity, title := (project form usage), paragraphs := (cons (project form meaning) (nil String))})
+}
+
+definition{
+  name: formSections,
+  parameters: [],
+  result: (List Foundation.View.Text.V3.Model::Section),
+  body: (cons (formSection "node" (intentForm (ctor Interaction::Intent.AddNode (record Core::Node {name := "", kind := (ctor Core::NodeKind.Input), memory := (0 : UInt64)})))) (cons (formSection "edge" (intentForm (ctor Interaction::Intent.AddEdge (record Core::Edge {source := "", target := ""})))) (cons (formSection "pii" (intentForm (ctor Interaction::Intent.MarkPii ""))) (cons (formSection "memory" (intentForm (ctor Interaction::Intent.RequireMemory (0 : UInt64)))) (cons (formSection "encrypt" (intentForm (ctor Interaction::Intent.RequirePiiEncryption))) (nil Foundation.View.Text.V3.Model::Section))))))
+}
+
+definition{
+  name: firstValue,
+  parameters: [values : (List String)],
+  result: String,
+  body: (match values | List.nil => "" | List.cons head rest => head)
+}
+
+definition{
+  name: guideMatchesCli,
+  parameters: [
+    examples : (List Foundation.View.Text.V3.Model::Example),
+    scripts : (List Foundation.View.Text.V3.Model::TextCliExample)
+  ],
+  result: Bool,
+  body: (match examples
+    | List.nil => (match scripts | List.nil => true | List.cons script more => false)
+    | List.cons head rest => (match scripts
+      | List.nil => false
+      | List.cons script more => ((prim equal (project head id) (project script name) : Bool) && (((prim length (project script text) : Nat) =? ((prim length (firstValue (project head values)) : Nat) + 1)) && (guideMatchesCli rest more))))),
+  axioms: [Classical.choice, Quot.sound, propext],
+  recursive_argument: examples
+}
+
 theorem{
   name: statementFormsCoverIntents,
   parameters: [intent : Interaction::Intent],
@@ -578,6 +633,28 @@ theorem{
   name: examplesMatchCliExamples,
   parameters: [],
   statement: ((specsMatchCli (exampleSpecs) (project (project (Specification::application) cli) examples)) = true),
+  proof: decide{},
+  axioms: [Classical.choice, Quot.sound, propext]
+}
+
+theorem{
+  name: guideErrorsAreRecoveries,
+  parameters: [],
+  statement: ((Guide::errors) = (recoveryHints (recoveries))),
+  proof: reflexivity{}
+}
+
+theorem{
+  name: guideSectionsAreStatementForms,
+  parameters: [],
+  statement: ((Guide::sections) = (formSections)),
+  proof: reflexivity{}
+}
+
+theorem{
+  name: guideExamplesAreCliExamples,
+  parameters: [],
+  statement: ((guideMatchesCli (Guide::examples) (project (project (Specification::application) cli) examples)) = true),
   proof: decide{},
   axioms: [Classical.choice, Quot.sound, propext]
 }
