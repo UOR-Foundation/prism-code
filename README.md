@@ -88,6 +88,7 @@ model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
 | `Compliance` | memory and PII-propagation findings |
 | `Engine` | line runner, certification, outcome rendering |
 | `Specification` | request dispatch and the text application with its acceptance vectors |
+| `Workbench` | page guidance: statement forms, examples drawn from the acceptance vectors, status texts and recovery text for every error and finding code |
 | `Foundation.View.Text.V1.Model` | the text view contract |
 | `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
 | `System` | the prism-code system model and its GitHub Pages target |
