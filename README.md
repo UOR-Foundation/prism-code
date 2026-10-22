@@ -93,7 +93,8 @@ model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
 | `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
 | `System` | the prism-code system model and its GitHub Pages target |
 | `Architecture` | the ISO/IEC/IEEE 42010 architecture description, checked against `System` |
-| `Foundation.Arch` | the architecture vocabulary (copy of the PrismPM stdlib module) |
+| `Design` | the OPM (ISO/PAS 19450) process model and the UML component, sequence and state machine views of the architecture, each element checked against the architecture and system models |
+| `Foundation.Arch` | the architecture and design-view vocabulary (copy of the PrismPM stdlib module at PrismPM#234) |
 
 ## Toolchain
 
