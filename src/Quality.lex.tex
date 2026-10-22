@@ -66,6 +66,24 @@ structure{
   ]
 }
 
+inductive{
+  name: EvidenceStatus,
+  type_parameters: [],
+  parameters: [],
+  constructors: [{name: Linked, fields: []}, {name: Pending, fields: [String]}]
+}
+
+structure{
+  name: CheckEvidence,
+  type_parameters: [],
+  parameters: [],
+  fields: [
+    {name: requirement, type: Nat},
+    {name: check, type: String},
+    {name: status, type: EvidenceStatus}
+  ]
+}
+
 definition{
   name: characteristicPerformanceEfficiency,
   parameters: [],
@@ -207,6 +225,41 @@ definition{
 }
 
 definition{
+  name: requirementKeyboard,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 10, subcharacteristicIndex := 5})
+}
+
+definition{
+  name: requirementLiveRegion,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 11, subcharacteristicIndex := 5})
+}
+
+definition{
+  name: requirementFocus,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 12, subcharacteristicIndex := 5})
+}
+
+definition{
+  name: requirementForcedColors,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 13, subcharacteristicIndex := 5})
+}
+
+definition{
+  name: requirementContrast,
+  parameters: [],
+  result: Foundation.Qual::QualityRequirement,
+  body: (record Foundation.Qual::QualityRequirement {index := 14, subcharacteristicIndex := 5})
+}
+
+definition{
   name: measureBrowserLatency,
   parameters: [],
   result: Foundation.Qual::QualityMeasure,
@@ -277,6 +330,41 @@ definition{
 }
 
 definition{
+  name: measureKeyboard,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 10, requirementIndex := 10, threshold := 0})
+}
+
+definition{
+  name: measureLiveRegion,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 11, requirementIndex := 11, threshold := 0})
+}
+
+definition{
+  name: measureFocus,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 12, requirementIndex := 12, threshold := 0})
+}
+
+definition{
+  name: measureForcedColors,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 13, requirementIndex := 13, threshold := 0})
+}
+
+definition{
+  name: measureContrast,
+  parameters: [],
+  result: Foundation.Qual::QualityMeasure,
+  body: (record Foundation.Qual::QualityMeasure {index := 14, requirementIndex := 14, threshold := 0})
+}
+
+definition{
   name: characteristicRecords,
   parameters: [],
   result: (List Foundation.Qual::ProductQualityCharacteristic),
@@ -294,14 +382,14 @@ definition{
   name: requirementRecords,
   parameters: [],
   result: (List Foundation.Qual::QualityRequirement),
-  body: (cons (requirementBrowserLatency) (cons (requirementCliLatency) (cons (requirementGuestSize) (cons (requirementClosureSize) (cons (requirementRequestCapacity) (cons (requirementResponseCapacity) (cons (requirementGuestAllocation) (cons (requirementAcceptanceVectors) (cons (requirementParity) (cons (requirementAccessibility) (nil Foundation.Qual::QualityRequirement)))))))))))
+  body: (cons (requirementBrowserLatency) (cons (requirementCliLatency) (cons (requirementGuestSize) (cons (requirementClosureSize) (cons (requirementRequestCapacity) (cons (requirementResponseCapacity) (cons (requirementGuestAllocation) (cons (requirementAcceptanceVectors) (cons (requirementParity) (cons (requirementAccessibility) (cons (requirementKeyboard) (cons (requirementLiveRegion) (cons (requirementFocus) (cons (requirementForcedColors) (cons (requirementContrast) (nil Foundation.Qual::QualityRequirement))))))))))))))))
 }
 
 definition{
   name: measureRecords,
   parameters: [],
   result: (List Foundation.Qual::QualityMeasure),
-  body: (cons (measureBrowserLatency) (cons (measureCliLatency) (cons (measureGuestSize) (cons (measureClosureSize) (cons (measureRequestCapacity) (cons (measureResponseCapacity) (cons (measureGuestAllocation) (cons (measureAcceptanceVectors) (cons (measureParity) (cons (measureAccessibility) (nil Foundation.Qual::QualityMeasure)))))))))))
+  body: (cons (measureBrowserLatency) (cons (measureCliLatency) (cons (measureGuestSize) (cons (measureClosureSize) (cons (measureRequestCapacity) (cons (measureResponseCapacity) (cons (measureGuestAllocation) (cons (measureAcceptanceVectors) (cons (measureParity) (cons (measureAccessibility) (cons (measureKeyboard) (cons (measureLiveRegion) (cons (measureFocus) (cons (measureForcedColors) (cons (measureContrast) (nil Foundation.Qual::QualityMeasure))))))))))))))))
 }
 
 definition{
@@ -322,14 +410,14 @@ definition{
   name: requirementNames,
   parameters: [],
   result: (List Named),
-  body: (cons (record Named {index := 0, name := "Browser check latency", text := "Checking vector 12, the largest request, in the browser takes under 50 ms."}) (cons (record Named {index := 1, name := "CLI check latency", text := "Checking vector 12, the largest request, with the command line takes under 20 ms."}) (cons (record Named {index := 2, name := "Wasm guest size", text := "The Core-Wasm guest is under 256 KiB."}) (cons (record Named {index := 3, name := "Browser closure size", text := "The Pages artifact closure is under 512 KiB."}) (cons (record Named {index := 4, name := "Request bound", text := "A request is at most 4096 bytes."}) (cons (record Named {index := 5, name := "Response bound", text := "A response is at most 16384 bytes."}) (cons (record Named {index := 6, name := "Guest allocation bound", text := "The guest allocates at most 4097 bytes."}) (cons (record Named {index := 7, name := "Acceptance coverage", text := "The model carries at least 25 acceptance vectors, one per reachable public outcome."}) (cons (record Named {index := 8, name := "Web and CLI parity", text := "No acceptance vector gives a different response in the page and the command line."}) (cons (record Named {index := 9, name := "Page accessibility", text := "The page has no WCAG 2.2 AA violation."}) (nil Named)))))))))))
+  body: (cons (record Named {index := 0, name := "Browser check latency", text := "Checking vector 12, the largest request, in the browser takes under 50 ms."}) (cons (record Named {index := 1, name := "CLI check latency", text := "Checking vector 12, the largest request, with the command line takes under 20 ms."}) (cons (record Named {index := 2, name := "Wasm guest size", text := "The Core-Wasm guest is under 256 KiB."}) (cons (record Named {index := 3, name := "Browser closure size", text := "The Pages artifact closure is under 512 KiB."}) (cons (record Named {index := 4, name := "Request bound", text := "A request is at most 4096 bytes."}) (cons (record Named {index := 5, name := "Response bound", text := "A response is at most 16384 bytes."}) (cons (record Named {index := 6, name := "Guest allocation bound", text := "The guest allocates at most 4097 bytes."}) (cons (record Named {index := 7, name := "Acceptance coverage", text := "The model carries at least 25 acceptance vectors, one per reachable public outcome."}) (cons (record Named {index := 8, name := "Web and CLI parity", text := "No acceptance vector gives a different response in the page and the command line."}) (cons (record Named {index := 9, name := "Page accessibility", text := "The page has no WCAG 2.2 AA violation."}) (cons (record Named {index := 10, name := "Keyboard-only operation", text := "Every control of the page, the script box, the example selector and the submit control, can be reached and operated with the keyboard alone (WCAG 2.1.1)."}) (cons (record Named {index := 11, name := "Announced report", text := "Each report is announced once through a single live region (WCAG 4.1.3)."}) (cons (record Named {index := 12, name := "Focus stays on submit", text := "Submitting a script leaves keyboard focus on the submit control (WCAG 2.4.3, 3.2.2)."}) (cons (record Named {index := 13, name := "Forced-colors legibility", text := "In forced-colors mode every control and the report keep a visible boundary and legible text (WCAG 1.4.11)."}) (cons (record Named {index := 14, name := "Light and dark contrast", text := "Text keeps a contrast ratio of at least 4.5:1 against its background in the light and dark themes (WCAG 1.4.3)."}) (nil Named))))))))))))))))
 }
 
 definition{
   name: budgets,
   parameters: [],
   result: (List Budget),
-  body: (cons (record Budget {measure := 0, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Milliseconds), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first GitHub-hosted runner measurement plus a stated margin"}) (cons (record Budget {measure := 1, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Milliseconds), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first GitHub-hosted runner measurement plus a stated margin"}) (cons (record Budget {measure := 2, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first build measurement plus a stated margin"}) (cons (record Budget {measure := 3, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first build measurement plus a stated margin"}) (cons (record Budget {measure := 4, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.requestMaximum"}) (cons (record Budget {measure := 5, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.responseMaximum"}) (cons (record Budget {measure := 6, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.guestAllocationMaximum"}) (cons (record Budget {measure := 7, bound := (ctor Bound.AtLeast), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.acceptanceVectors; conformance IDs #8 to #11"}) (cons (record Budget {measure := 8, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#19 parity gate"}) (cons (record Budget {measure := 9, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements"}) (nil Budget)))))))))))
+  body: (cons (record Budget {measure := 0, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Milliseconds), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first GitHub-hosted runner measurement plus a stated margin"}) (cons (record Budget {measure := 1, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Milliseconds), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first GitHub-hosted runner measurement plus a stated margin"}) (cons (record Budget {measure := 2, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first build measurement plus a stated margin"}) (cons (record Budget {measure := 3, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Placeholder), verdict := (ctor Verdict.Open), source := "#23 starting proposal; confirm on the first build measurement plus a stated margin"}) (cons (record Budget {measure := 4, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.requestMaximum"}) (cons (record Budget {measure := 5, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.responseMaximum"}) (cons (record Budget {measure := 6, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Bytes), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.guestAllocationMaximum"}) (cons (record Budget {measure := 7, bound := (ctor Bound.AtLeast), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.Derived), verdict := (ctor Verdict.Proved), source := "Specification.application.acceptanceVectors; conformance IDs #8 to #11"}) (cons (record Budget {measure := 8, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#19 parity gate"}) (cons (record Budget {measure := 9, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements"}) (cons (record Budget {measure := 10, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements; evidenced by the PrismPM#208 generated-view check"}) (cons (record Budget {measure := 11, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements; evidenced by the PrismPM#208 generated-view check"}) (cons (record Budget {measure := 12, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements; evidenced by the PrismPM#208 generated-view check"}) (cons (record Budget {measure := 13, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements; evidenced by the PrismPM#208 generated-view check"}) (cons (record Budget {measure := 14, bound := (ctor Bound.AtMost), unit := (ctor BudgetUnit.Count), basis := (ctor Basis.ZeroTolerance), verdict := (ctor Verdict.Open), source := "#16 accessibility requirements; evidenced by the PrismPM#208 generated-view check"}) (nil Budget))))))))))))))))
 }
 
 definition{
@@ -543,10 +631,91 @@ definition{
 }
 
 definition{
+  name: accessibilityEvidence,
+  parameters: [],
+  result: (List CheckEvidence),
+  body: (cons (record CheckEvidence {requirement := 9, check := "PrismPM#208 generated-view checks for the five accessibility requirements below", status := (ctor EvidenceStatus.Pending "links when the five accessibility checks below link")}) (cons (record CheckEvidence {requirement := 10, check := "PrismPM#208 generated-view journey: keyboard-only pass over the script box, example selector and submit control", status := (ctor EvidenceStatus.Pending "PrismPM#208 names no check for this property; the SDK must register one before this evidence can be linked")}) (cons (record CheckEvidence {requirement := 11, check := "PrismPM#208 generated-view check: one atomic status region announces each report once, three-engine journey", status := (ctor EvidenceStatus.Pending "PrismPM#208 is open and PrismPM#50 is not on main, so the SDK check does not exist yet")}) (cons (record CheckEvidence {requirement := 12, check := "PrismPM#208 generated-view journey: keyboard focus remains on the submit control after a check", status := (ctor EvidenceStatus.Pending "PrismPM#208 names no check for this property; the SDK must register one before this evidence can be linked")}) (cons (record CheckEvidence {requirement := 13, check := "PrismPM#208 generated-view check: system colors preserved in forced-colors mode, three-engine journey", status := (ctor EvidenceStatus.Pending "PrismPM#208 is open and PrismPM#56 is not on main, so the SDK check does not exist yet")}) (cons (record CheckEvidence {requirement := 14, check := "PrismPM#208 generated-view check: text contrast of the generated view in the light and dark themes", status := (ctor EvidenceStatus.Pending "PrismPM#208 names no check for this property; the SDK must register one before this evidence can be linked")}) (nil CheckEvidence)))))))
+}
+
+definition{
+  name: evidenceRequirements,
+  parameters: [records : (List CheckEvidence)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (cons (project head requirement) (evidenceRequirements rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: evidenceHonest,
+  parameters: [records : (List CheckEvidence)],
+  result: Bool,
+  body: (match records
+    | List.nil => true
+    | List.cons head rest => ((nonEmpty (project head check)) && ((match (project head status)
+      | EvidenceStatus.Linked => true
+      | EvidenceStatus.Pending reason => (nonEmpty reason)) && (evidenceHonest rest)))),
+  recursive_argument: records
+}
+
+definition{
+  name: pendingEvidence,
+  parameters: [records : (List CheckEvidence)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (match (project head status)
+      | EvidenceStatus.Linked => (pendingEvidence rest)
+      | EvidenceStatus.Pending reason => (cons (project head requirement) (pendingEvidence rest)))),
+  recursive_argument: records
+}
+
+definition{
+  name: requirementsUnder,
+  parameters: [wanted : Nat, records : (List Foundation.Qual::QualityRequirement)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (if ((project head subcharacteristicIndex) =? wanted) then (cons (project head index) (requirementsUnder wanted rest)) else (requirementsUnder wanted rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: zeroToleranceMeasures,
+  parameters: [records : (List Budget)],
+  result: (List Nat),
+  body: (match records
+    | List.nil => (nil Nat)
+    | List.cons head rest => (match (project head basis)
+      | Basis.ZeroTolerance => (cons (project head measure) (zeroToleranceMeasures rest))
+      | Basis.Derived => (zeroToleranceMeasures rest)
+      | Basis.Placeholder => (zeroToleranceMeasures rest))),
+  recursive_argument: records
+}
+
+definition{
+  name: zeroThresholds,
+  parameters: [wanted : (List Nat), records : (List Foundation.Qual::QualityMeasure)],
+  result: Bool,
+  body: (match wanted
+    | List.nil => true
+    | List.cons head rest => (((thresholdOf head records) =? 0) && (zeroThresholds rest records))),
+  recursive_argument: wanted
+}
+
+definition{
+  name: evidenceValid,
+  parameters: [],
+  result: Bool,
+  body: ((evidenceHonest (accessibilityEvidence)) && ((allMembers (requirementsUnder 5 (requirementRecords)) (evidenceRequirements (accessibilityEvidence))) && (allMembers (evidenceRequirements (accessibilityEvidence)) (requirementIndexes (requirementRecords)))))
+}
+
+definition{
   name: qualityValid,
   parameters: [],
   result: Bool,
-  body: ((sameNats (namedIndexes (characteristicNames)) (characteristicIndexes (characteristicRecords))) && ((sameNats (namedIndexes (subcharacteristicNames)) (subcharacteristicIndexes (subcharacteristicRecords))) && ((sameNats (namedIndexes (requirementNames)) (requirementIndexes (requirementRecords))) && ((allMembers (subcharacteristicParents (subcharacteristicRecords)) (characteristicIndexes (characteristicRecords))) && ((allMembers (characteristicIndexes (characteristicRecords)) (subcharacteristicParents (subcharacteristicRecords))) && ((allMembers (requirementParents (requirementRecords)) (subcharacteristicIndexes (subcharacteristicRecords))) && ((allMembers (measureRequirements (measureRecords)) (requirementIndexes (requirementRecords))) && ((allMembers (requirementIndexes (requirementRecords)) (measureRequirements (measureRecords))) && ((sameNats (budgetMeasures (budgets)) (measureIndexes (measureRecords))) && (budgetsSourced (budgets)))))))))))
+  body: (((sameNats (namedIndexes (characteristicNames)) (characteristicIndexes (characteristicRecords))) && ((sameNats (namedIndexes (subcharacteristicNames)) (subcharacteristicIndexes (subcharacteristicRecords))) && ((sameNats (namedIndexes (requirementNames)) (requirementIndexes (requirementRecords))) && ((allMembers (subcharacteristicParents (subcharacteristicRecords)) (characteristicIndexes (characteristicRecords))) && ((allMembers (characteristicIndexes (characteristicRecords)) (subcharacteristicParents (subcharacteristicRecords))) && ((allMembers (requirementParents (requirementRecords)) (subcharacteristicIndexes (subcharacteristicRecords))) && ((allMembers (measureRequirements (measureRecords)) (requirementIndexes (requirementRecords))) && ((allMembers (requirementIndexes (requirementRecords)) (measureRequirements (measureRecords))) && ((sameNats (budgetMeasures (budgets)) (measureIndexes (measureRecords))) && (budgetsSourced (budgets))))))))))) && (evidenceValid))
 }
 
 theorem{
@@ -609,6 +778,41 @@ theorem{
   name: vectorTwelveIsLargest,
   parameters: [],
   statement: ((requestLengthAt 11 0 (declaredVectors)) = (thresholdOf 4 (measureRecords))),
+  proof: decide{}
+}
+
+theorem{
+  name: accessibilityRequirementsDeclared,
+  parameters: [],
+  statement: ((requirementsUnder 5 (requirementRecords)) = (cons 9 (cons 10 (cons 11 (cons 12 (cons 13 (cons 14 (nil Nat)))))))),
+  proof: decide{}
+}
+
+theorem{
+  name: accessibilityRequirementsEvidenced,
+  parameters: [],
+  statement: ((evidenceValid) = true),
+  proof: decide{}
+}
+
+theorem{
+  name: accessibilityEvidencePending,
+  parameters: [],
+  statement: ((pendingEvidence (accessibilityEvidence)) = (cons 9 (cons 10 (cons 11 (cons 12 (cons 13 (cons 14 (nil Nat)))))))),
+  proof: decide{}
+}
+
+theorem{
+  name: accessibilityBudgetsZeroTolerance,
+  parameters: [],
+  statement: ((zeroToleranceMeasures (budgets)) = (cons 8 (cons 9 (cons 10 (cons 11 (cons 12 (cons 13 (cons 14 (nil Nat))))))))),
+  proof: decide{}
+}
+
+theorem{
+  name: accessibilityThresholdsZero,
+  parameters: [],
+  statement: ((zeroThresholds (cons 9 (cons 10 (cons 11 (cons 12 (cons 13 (cons 14 (nil Nat))))))) (measureRecords)) = true),
   proof: decide{}
 }
 \end{semanticmodule}
