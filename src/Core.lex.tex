@@ -376,7 +376,7 @@ definition{
   name: canonicalLines,
   parameters: [project : Project],
   result: (List String),
-  body: (cons "prism-code/1" (prim append (policyLines (project var{
+  body: (cons "dataflow-policy/1" (prim append (policyLines (project var{
     name: project
   } policies)) (prim append (nodeLines (sortNodes (project var{
     name: project

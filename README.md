@@ -1,6 +1,6 @@
-# prism-code
+# dataflow-policy
 
-prism-code checks a Prism dataflow project script against its declared memory
+dataflow-policy checks a Prism dataflow project script against its declared memory
 and PII-encryption policies, and emits the project's canonical form. It is a
 Prism application: its behavior is authored once in LexLean (`src/*.lex.tex`)
 and PrismPM generates the verified browser application (GitHub Pages) and the
@@ -11,18 +11,18 @@ written by hand outside the model.
 
 Development, version 0.1.0. The authoritative model is committed; the SDK
 binding, generated artifacts, CLI, and Pages deployment are not yet in place.
-The work is tracked in the prism-code GitHub project and its milestones.
+The work is tracked in the dataflow-policy GitHub project and its milestones.
 
 The model is LexLean language 1.2 notation, built with LexLean v0.4 and locked
-in `lexlean.lock` (`lexlean/lock/2`). Its product identifiers (`prism-code`,
-`PrismCode`, the `prism-code/1` script header, and the repository and Pages
+in `lexlean.lock` (`lexlean/lock/2`). Its product identifiers (`dataflow-policy`,
+`PrismCode` (the Lean namespace, unchanged), the `dataflow-policy/1` script header, and the repository and Pages
 URLs) are bound by the application model digest in `System` and by the lock, so
 they change only through the LexLean and PrismPM toolchain, not by hand.
 
 ## What it does
 
 A request is UTF-8 text of at most 4096 bytes. The first line is the header
-`prism-code/1`; each further non-empty line is one statement:
+`dataflow-policy/1`; each further non-empty line is one statement:
 
 | Statement | Meaning |
 | --- | --- |
@@ -58,11 +58,11 @@ description, help sections, named examples and exit-code map. PrismPM
 generates the program from that record:
 
 ```
-prism-code check [FILE]    read the script from FILE, or from stdin when FILE
+dataflow-policy check [FILE]    read the script from FILE, or from stdin when FILE
                            is omitted or `-`; print the report unchanged
-prism-code examples [NAME] print a named example script
-prism-code --help
-prism-code --version
+dataflow-policy examples [NAME] print a named example script
+dataflow-policy --help
+dataflow-policy --version
 ```
 
 A request over 4096 bytes is refused before dispatch. Exit codes come from the
@@ -91,14 +91,14 @@ model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
 | `Workbench` | page guidance: statement forms, examples drawn from the acceptance vectors, status texts and recovery text for every error and finding code |
 | `Foundation.View.Text.V1.Model` | the text view contract |
 | `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
-| `System` | the prism-code system model and its GitHub Pages target |
+| `System` | the dataflow-policy system model and its GitHub Pages target |
 | `Architecture` | the ISO/IEC/IEEE 42010 architecture description, checked against `System` |
 | `Design` | the OPM (ISO/PAS 19450) process model and the UML component, sequence and state machine views of the architecture, each element checked against the architecture and system models |
 | `Foundation.Arch` | the architecture and design-view vocabulary (copy of the PrismPM stdlib module at PrismPM#234) |
 
 ## Toolchain
 
-prism-code is built with LexLean and the PrismPM SDK, used only through the
+dataflow-policy is built with LexLean and the PrismPM SDK, used only through the
 digest-pinned SDK image in `prismpm.lock`. That lock and `template.lock` are
 written when the repository binds a public PrismPM SDK release; until then
 `just vv` and the bootstrap workflow cannot pass. See

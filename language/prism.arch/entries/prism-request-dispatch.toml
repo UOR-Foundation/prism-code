@@ -12,6 +12,6 @@ component = "dispatch"
 [[form]]
 id = "prism-request-dispatch"
 channel = "text"
-surface = "Prism-code request dispatch"
+surface = "Dataflow-policy request dispatch"
 canonical_source = true
 features = ["sentence-case", "singular"]

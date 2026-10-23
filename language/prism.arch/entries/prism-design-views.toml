@@ -12,6 +12,6 @@ component = "designValid"
 [[form]]
 id = "prism-design-views"
 channel = "text"
-surface = "Prism-code design views"
+surface = "Dataflow-policy design views"
 canonical_source = true
 features = ["sentence-case", "singular"]

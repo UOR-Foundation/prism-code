@@ -12,6 +12,6 @@ component = "systemModel"
 [[form]]
 id = "prism-system-model"
 channel = "text"
-surface = "Prism-code system model"
+surface = "Dataflow-policy system model"
 canonical_source = true
 features = ["sentence-case", "singular"]

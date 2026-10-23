@@ -12,6 +12,6 @@ component = "qualityValid"
 [[form]]
 id = "prism-quality-model"
 channel = "text"
-surface = "Prism-code quality model"
+surface = "Dataflow-policy quality model"
 canonical_source = true
 features = ["sentence-case", "singular"]
