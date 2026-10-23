@@ -18,6 +18,29 @@ The three honesty levels (R2):
 `cargo xtask audit-limits` fails if any code path returns an error the
 model does not sanction.
 
+## cli
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `CL-01` | `build` | prism-code check FILE, check - and check with the request on standard input print the same bytes for every acceptance vector within the request maximum, and those bytes equal the vector's modeled response. |
+| `CL-02` | `build` | The exit status of prism-code check is the model's code for the outcome the report begins with: 0 for status accepted, 1 for status rejected and 2 for status error. |
+| `CL-03` | `build` | A request longer than the request maximum is refused before dispatch: standard output stays empty, standard error names InputLimit and the exit status is the code of the error outcome. |
+| `CL-04` | `build` | No Rust source in the repository implements dispatch, request parsing or report formatting; the command line is generated from the model. |
+| `CL-05` | `build` | --help prints the model's purpose, statement reference, report format, status texts, recovery text for every error and finding code, example names and exit-code table, and exits 0. |
+| `CL-06` | `build` | --version prints the model's cargoName and cargoVersion on one line, prism-code 0.1.0, and exits 0. |
+| `CL-07` | `build` | examples lists the model's example names, examples NAME prints that script unchanged, and piping each script to check gives the report and exit status of the acceptance vector it is drawn from. |
+| `CL-08` | `build` | Every guidance string, example and code explanation in the workbench model also appears in the --help or examples output. |
+| `CL-09` | `build` | An unknown flag is refused with the UnknownFlag diagnostic on standard error, the model's usage code and empty standard output. |
+| `CL-10` | `build` | A second operand is refused with the ExtraArgument diagnostic on standard error, the model's usage code and empty standard output. |
+| `CL-11` | `build` | Running without a command is refused with the MissingCommand diagnostic on standard error, the model's usage code and empty standard output. |
+| `CL-12` | `build` | An unknown command is refused with the UnknownCommand diagnostic on standard error, the model's usage code and empty standard output. |
+| `CL-13` | `build` | An example name the model does not declare is refused with the UnknownExample diagnostic on standard error, the model's usage code and empty standard output. |
+| `CL-14` | `build` | A request path that does not exist is refused with the InputMissing diagnostic on standard error, the model's I/O code and empty standard output. |
+| `CL-15` | `build` | A request path that cannot be opened, here a symbolic link, is refused with the InputOpen diagnostic on standard error, the model's I/O code and empty standard output. |
+| `CL-16` | `build` | A request path that is not a regular file is refused with the InputType diagnostic on standard error, the model's I/O code and empty standard output. |
+| `CL-17` | `build` | A request that fails while it is being read is refused with the InputRead diagnostic on standard error, the model's I/O code and empty standard output. |
+| `CL-18` | `build` | A report that cannot be written to standard output is refused with the OutputWrite diagnostic on standard error and the model's I/O code. |
+
 ## Cited authorities
 
 Never re-derived, vendored, or gated on.
