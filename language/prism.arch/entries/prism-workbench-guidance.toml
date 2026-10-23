@@ -12,6 +12,6 @@ component = "workbench"
 [[form]]
 id = "prism-workbench-guidance"
 channel = "text"
-surface = "Prism-code workbench guidance"
+surface = "Dataflow-policy workbench guidance"
 canonical_source = true
 features = ["sentence-case", "singular"]

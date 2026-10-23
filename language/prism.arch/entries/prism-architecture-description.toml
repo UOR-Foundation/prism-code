@@ -12,6 +12,6 @@ component = "architectureValid"
 [[form]]
 id = "prism-architecture-description"
 channel = "text"
-surface = "Prism-code architecture description"
+surface = "Dataflow-policy architecture description"
 canonical_source = true
 features = ["sentence-case", "singular"]

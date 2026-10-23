@@ -5,7 +5,7 @@
 \importmodule{Foundation.Arch}
 \importmodule{Production.BrowserSystem}
 \importmodule{System}
-\title{Prism-code architecture description}
+\title{Dataflow-policy architecture description}
 \begin{semanticmodule}
 inductive{
   name: SystemRef,
@@ -365,7 +365,7 @@ definition{
   name: components,
   parameters: [],
   result: (List Binding),
-  body: (cons (record Binding {index := 0, name := "Browser", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 1, name := "Browser view", anchor := (ctor SystemRef.Component "prism-code-browser")}) (cons (record Binding {index := 2, name := "CLI adapter", anchor := (ctor SystemRef.Undeclared)}) (cons (record Binding {index := 3, name := "Core-Wasm guest", anchor := (ctor SystemRef.Artifact "prism-code-application")}) (cons (record Binding {index := 4, name := "Pages target", anchor := (ctor SystemRef.Target "pages")}) (cons (record Binding {index := 5, name := "Project author", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 6, name := "Release binaries", anchor := (ctor SystemRef.Undeclared)}) (nil Binding))))))))
+  body: (cons (record Binding {index := 0, name := "Browser", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 1, name := "Browser view", anchor := (ctor SystemRef.Component "dataflow-policy-browser")}) (cons (record Binding {index := 2, name := "CLI adapter", anchor := (ctor SystemRef.Undeclared)}) (cons (record Binding {index := 3, name := "Core-Wasm guest", anchor := (ctor SystemRef.Artifact "dataflow-policy-application")}) (cons (record Binding {index := 4, name := "Pages target", anchor := (ctor SystemRef.Target "pages")}) (cons (record Binding {index := 5, name := "Project author", anchor := (ctor SystemRef.External)}) (cons (record Binding {index := 6, name := "Release binaries", anchor := (ctor SystemRef.Undeclared)}) (nil Binding))))))))
 }
 
 definition{
@@ -421,7 +421,7 @@ definition{
   name: correspondences,
   parameters: [],
   result: (List Correspondence),
-  body: (cons (record Correspondence {concern := 1, view := 1, claim := (record Claim {module := "Engine", name := "completedRunAcceptedOnlyIfCompliant", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 1, claim := (record Claim {module := "Engine", name := "failedRunNeverAccepted", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 0, claim := (record Claim {module := "Engine", name := "certifyWithAcceptsExactly", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 5, claim := (record Claim {module := "System", name := "prismCodeSystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 3, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 0, view := 6, claim := (record Claim {module := "System", name := "prismCodeSystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 2, view := 4, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 2, view := 2, claim := (record Claim {module := "Specification", name := "dispatch", kind := "definition"})}) (nil Correspondence)))))))))
+  body: (cons (record Correspondence {concern := 1, view := 1, claim := (record Claim {module := "Engine", name := "completedRunAcceptedOnlyIfCompliant", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 1, claim := (record Claim {module := "Engine", name := "failedRunNeverAccepted", kind := "theorem"})}) (cons (record Correspondence {concern := 1, view := 0, claim := (record Claim {module := "Engine", name := "certifyWithAcceptsExactly", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 5, claim := (record Claim {module := "System", name := "dataflowPolicySystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 3, view := 3, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 0, view := 6, claim := (record Claim {module := "System", name := "dataflowPolicySystemReleaseReady", kind := "theorem"})}) (cons (record Correspondence {concern := 2, view := 4, claim := (record Claim {module := "Specification", name := "application", kind := "definition"})}) (cons (record Correspondence {concern := 2, view := 2, claim := (record Claim {module := "Specification", name := "dispatch", kind := "definition"})}) (nil Correspondence)))))))))
 }
 
 definition{

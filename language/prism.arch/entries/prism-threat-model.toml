@@ -12,6 +12,6 @@ component = "securityValid"
 [[form]]
 id = "prism-threat-model"
 channel = "text"
-surface = "Prism-code threat model"
+surface = "Dataflow-policy threat model"
 canonical_source = true
 features = ["sentence-case", "singular"]
