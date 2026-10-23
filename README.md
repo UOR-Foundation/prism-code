@@ -88,9 +88,13 @@ model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
 | `Compliance` | memory and PII-propagation findings |
 | `Engine` | line runner, certification, outcome rendering |
 | `Specification` | request dispatch and the text application with its acceptance vectors |
+| `Workbench` | page guidance: statement forms, examples drawn from the acceptance vectors, status texts and recovery text for every error and finding code |
 | `Foundation.View.Text.V1.Model` | the text view contract |
 | `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
 | `System` | the prism-code system model and its GitHub Pages target |
+| `Architecture` | the ISO/IEC/IEEE 42010 architecture description, checked against `System` |
+| `Design` | the OPM (ISO/PAS 19450) process model and the UML component, sequence and state machine views of the architecture, each element checked against the architecture and system models |
+| `Foundation.Arch` | the architecture and design-view vocabulary (copy of the PrismPM stdlib module at PrismPM#234) |
 
 ## Toolchain
 
