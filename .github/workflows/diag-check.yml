@@ -11,20 +11,28 @@ jobs:
   check:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    env:
+      SDK: ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: automation/template-contract-update
           fetch-depth: 0
           persist-credentials: false
-      - name: Fetch
-        uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758
-        with:
-          command: fetch
-          sdk-image: ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691
-      - name: Check
-        uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758
-        continue-on-error: true
-        with:
-          command: check
-          sdk-image: ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691
+      - name: Run fetch, check, verify with output
+        run: |
+          rev=$(git rev-parse HEAD)
+          run() {
+            net=$1; shift
+            set +e
+            docker run --rm --user "$(id -u):$(id -g)" --env HOME=/tmp/prismpm-home \
+              --env PRISMPM_EPHEMERAL_HOME=1 --env BUILDX_CONFIG=/tmp/prismpm-buildx \
+              --env "PRISMPM_SOURCE_REVISION=$rev" --tmpfs /tmp:rw,exec,nosuid,size=2g \
+              --cap-drop ALL --security-opt no-new-privileges $net \
+              --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" "$SDK" \
+              prismpm --project "$GITHUB_WORKSPACE" --json "$@" > /tmp/out.json 2>/tmp/err.txt
+            echo "== prismpm $* exit $?"; head -c 6000 /tmp/out.json; echo; head -c 3000 /tmp/err.txt
+            set -e
+          }
+          run "" fetch
+          run "--network none" check
