@@ -19,8 +19,14 @@ template-check:
     prismpm lock check
 
 # Regenerate everything the model owns: CONFORMANCE.md.
+#
+# `prismpm template check` runs this recipe in a network-less staging copy with
+# the SDK CARGO_HOME. Without `--offline`, cargo fetches the sparse registry
+# `config.json` even when every locked package is cached and fails resolving
+# index.crates.io. Cargo.lock is pinned to the SDK's cached crate set, so the
+# offline resolution is complete.
 model-write:
-    cargo run -q -p xtask -- check-model --write
+    cargo run -q --offline -p xtask -- check-model --write
 
 fmt:
     cargo fmt --all
