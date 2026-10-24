@@ -1,0 +1,30 @@
+name: diag model check
+
+on:
+  push:
+    branches: [diag/template-update-output]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: automation/template-contract-update
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch
+        uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758
+        with:
+          command: fetch
+          sdk-image: ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691
+      - name: Check
+        uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758
+        continue-on-error: true
+        with:
+          command: check
+          sdk-image: ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691
