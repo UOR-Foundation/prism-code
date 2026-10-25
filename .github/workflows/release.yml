@@ -1,0 +1,107 @@
+name: release
+
+# Tags only: nothing here runs for pull requests or branch pushes.
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build / ${{ matrix.arch }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: sdk
+        name: Resolve the locked SDK image
+        run: |
+          set -euo pipefail
+          image=$(sed -n 's/.*"sdk_image":"\([^"]*\)".*/\1/p' prismpm.lock)
+          if [[ ! $image =~ ^[a-z0-9.-]+(:[0-9]{1,5})?/[a-z0-9./_-]+@sha256:[0-9a-f]{64}$ ]]; then
+            printf '%s\n' 'prismpm.lock does not select an immutable SDK image' >&2
+            exit 64
+          fi
+          printf 'image=%s\n' "$image" >> "$GITHUB_OUTPUT"
+      - uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758 # prismpm-action-input
+        with:
+          command: fetch
+          sdk-image: ${{ steps.sdk.outputs.image }}
+      - uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758 # prismpm-action-input
+        with:
+          command: build
+          reference: ghcr.io/uor-foundation/prism-code:${{ github.ref_name }}
+          sdk-image: ${{ steps.sdk.outputs.image }}
+      - name: Stage this architecture's release files
+        env:
+          ARCH: ${{ matrix.arch }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version=${TAG#v}
+          target=$ARCH-unknown-linux-musl
+          shopt -s nullglob
+          builds=(.prism/build/*/)
+          test ${#builds[@]} -eq 1
+          build=${builds[0]%/}
+          # The tarball must carry exactly the binary the build manifest binds.
+          want=$(jq -r --arg p "cli/bin/$target/prism-code" '.files[] | select(.path == $p) | .sha256' "$build/manifest.json")
+          have=$(sha256sum "$build/cli/bin/$target/prism-code" | cut -d' ' -f1)
+          test -n "$want" && test "$want" = "$have"
+          name=prism-code-$version-$target
+          mkdir -p "stage/$name" out
+          cp "$build/cli/bin/$target/prism-code" "stage/$name/"
+          tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=@0 \
+            -czf "out/$name.tar.gz" -C stage "$name"
+          # The SBOM and design views do not vary by architecture.
+          if test "$ARCH" = x86_64; then
+            cp "$build/cli/sbom.spdx.json" "out/prism-code-$version.spdx.json"
+            cp "$build"/design/* out/
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: release-${{ matrix.arch }}
+          path: out
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: attach to the GitHub release
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          pattern: release-*
+          path: out
+          merge-multiple: true
+      - name: Checksum and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          cd out
+          sha256sum -- * > SHA256SUMS
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --generate-notes -- *
