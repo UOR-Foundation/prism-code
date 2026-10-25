@@ -1,0 +1,25 @@
+{
+  "name": "UOR PrismPM SDK (Codespaces)",
+  "image": "ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691",
+  "containerUser": "root",
+  "remoteUser": "vscode",
+  "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "overrideCommand": false,
+  "runArgs": [
+    "--init"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "leanprover.lean4",
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  },
+  "onCreateCommand": "npm exec --yes --no-audit --no-fund prism-code@0.2.0 -- --help > /dev/null",
+  "postCreateCommand": "prismpm template check && prismpm lock check"
+}

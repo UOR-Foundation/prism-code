@@ -1,0 +1,61 @@
+name: codespaces devcontainer
+
+# The Codespaces configuration builds with the devcontainer CLI (as a codespace
+# does), shares the host Docker daemon with the SDK image, and runs
+# `npx prism-code check` and `build` on the Calculator example the SDK image
+# ships. Path-filtered so it does not add a 5.5 GB pull to unrelated pull requests.
+
+on:
+  pull_request:
+    paths: ['.devcontainer/codespaces/**', '.github/workflows/codespaces-devcontainer.yml']
+  push:
+    branches: [main]
+    paths: ['.devcontainer/codespaces/**', '.github/workflows/codespaces-devcontainer.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codespaces-devcontainer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  devcontainer:
+    name: devcontainer up, check, build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+      - run: npm install --global --no-audit --no-fund @devcontainers/cli@0.89.0
+      - name: devcontainer up
+        run: |
+          start=$(date +%s)
+          devcontainer up --workspace-folder . --config .devcontainer/codespaces/devcontainer.json
+          echo "devcontainer up: $(( $(date +%s) - start )) s (includes pulling the SDK image once)" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: check and build the SDK's Calculator example inside the container
+        run: |
+          # The runner user is not the container's vscode user; let it write here.
+          chmod a+rwx "$PWD"
+          run() { devcontainer exec --workspace-folder . --config .devcontainer/codespaces/devcontainer.json bash -euc "$1"; }
+          run 'docker version --format "daemon {{.Server.Version}}"'
+          run 'cp -r --no-preserve=mode /opt/prismpm/share/conformance-root/examples/Calculator zz-calc && cp prismpm.lock zz-calc/'
+          start=$(date +%s)
+          run 'cd zz-calc && npx prism-code@0.2.0 check' 2>&1 | tee /tmp/check.log
+          echo "check: $(( $(date +%s) - start )) s" | tee -a "$GITHUB_STEP_SUMMARY"
+          grep -q '^check passed' /tmp/check.log
+          start=$(date +%s)
+          run 'cd zz-calc && npx prism-code@0.2.0 build' 2>&1 | tee /tmp/build.log
+          echo "build: $(( $(date +%s) - start )) s" | tee -a "$GITHUB_STEP_SUMMARY"
+          grep -q '^build published' /tmp/build.log
+          run 'find zz-calc/.prism -name "*.holo" | grep -q Calculator.holo'
+          # The SDK image came from the shared daemon: no layer was downloaded again.
+          if grep -q 'Pull complete\|Downloaded newer layer' /tmp/check.log /tmp/build.log; then
+            echo 'the SDK image layers were downloaded a second time' >&2
+            exit 1
+          fi
