@@ -108,8 +108,11 @@ Rust ready; nothing is installed on your machine. Its configuration is
 separate from the local [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json),
 which is template policy bound by `template.lock` and stays as it is. The
 codespace shares the host's Docker daemon, so `npx prism-code@0.2.0 check`
-and `build` start the SDK image the codespace is already running on, without
-downloading it again. To just try a verified Prism application with no SDK image,
+and `build` start the SDK image the codespace is already running on (no second
+download; measured with the devcontainer CLI on a CI runner). **Not usable yet:**
+the SDK image (14.8 GB on disk) does not fit the 32 GB disk of the machine types
+offered to this repository, so a codespace currently fails to start with
+`no space left on device`. To just try a verified Prism application with no SDK image,
 use the [template's try page](https://uor-foundation.github.io/template/).
 
 ## Toolchain
