@@ -64,112 +64,112 @@ definition{
   name: standardIso42010,
   parameters: [],
   result: Foundation.Arch::StandardReference,
-  body: (record Foundation.Arch::StandardReference {standardIndex := 4, editionIndex := 0})
+  body: (record Foundation.Arch::StandardReference {standardIndex := 4, editionIndex := 0, standardId := "ISO-42010-2022", edition := "2022"})
 }
 
 definition{
   name: stakeholderAuthorWeb,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 2})
+  body: (record Foundation.Arch::Stakeholder {index := 2, name := "Project author (web)", text := "Writes a Prism dataflow script and checks it in the browser page."})
 }
 
 definition{
   name: stakeholderAuthorCli,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 1})
+  body: (record Foundation.Arch::Stakeholder {index := 1, name := "Project author (CLI)", text := "Checks the same script from a terminal or a build step with the command-line tool."})
 }
 
 definition{
   name: stakeholderMaintainer,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 3})
+  body: (record Foundation.Arch::Stakeholder {index := 3, name := "Maintainer", text := "Changes the model and keeps every generated surface in step with it."})
 }
 
 definition{
   name: stakeholderAuditor,
   parameters: [],
   result: Foundation.Arch::Stakeholder,
-  body: (record Foundation.Arch::Stakeholder {index := 0})
+  body: (record Foundation.Arch::Stakeholder {index := 0, name := "Auditor", text := "Reviews what the checker claims and where the script is processed."})
 }
 
 definition{
   name: concernCorrectness,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 1})
+  body: (record Foundation.Arch::Concern {index := 1, name := "Correctness of findings", text := "A script is accepted only if it complies, and every finding names a real violation."})
 }
 
 definition{
   name: concernPrivacy,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 3})
+  body: (record Foundation.Arch::Concern {index := 3, name := "Privacy of scripts", text := "Nothing leaves the browser or the process: no network, no storage."})
 }
 
 definition{
   name: concernAvailability,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 0})
+  body: (record Foundation.Arch::Concern {index := 0, name := "Availability of the page", text := "The page is a static artifact that needs no service beyond its host."})
 }
 
 definition{
   name: concernParity,
   parameters: [],
   result: Foundation.Arch::Concern,
-  body: (record Foundation.Arch::Concern {index := 2})
+  body: (record Foundation.Arch::Concern {index := 2, name := "Parity of web and CLI", text := "The page and the command line give the same response to the same request."})
 }
 
 definition{
   name: componentProjectAuthor,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 5, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
+  body: (record Foundation.Arch::Component {index := 5, kind := (ctor Foundation.Arch::ComponentKind.externalSystem), name := "Project author", text := "The person who writes a Prism dataflow script and asks for it to be checked."})
 }
 
 definition{
   name: componentBrowserRuntime,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 0, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
+  body: (record Foundation.Arch::Component {index := 0, kind := (ctor Foundation.Arch::ComponentKind.externalSystem), name := "Browser", text := "The web browser that loads the static page and runs the checker in its own process."})
 }
 
 definition{
   name: componentPagesTarget,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 4, kind := (ctor Foundation.Arch::ComponentKind.externalSystem)})
+  body: (record Foundation.Arch::Component {index := 4, kind := (ctor Foundation.Arch::ComponentKind.externalSystem), name := "Pages target", text := "The GitHub Pages target that serves the static page and its generated artifacts."})
 }
 
 definition{
   name: componentCoreWasmGuest,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 3, kind := (ctor Foundation.Arch::ComponentKind.service)})
+  body: (record Foundation.Arch::Component {index := 3, kind := (ctor Foundation.Arch::ComponentKind.service), name := "Core-Wasm guest", text := "The Core-Wasm guest that decides every request and returns the modeled response."})
 }
 
 definition{
   name: componentBrowserView,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 1, kind := (ctor Foundation.Arch::ComponentKind.service)})
+  body: (record Foundation.Arch::Component {index := 1, kind := (ctor Foundation.Arch::ComponentKind.service), name := "Browser view", text := "The browser view that shows the script, the findings and the verdict to the project author."})
 }
 
 definition{
   name: componentCliAdapter,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 2, kind := (ctor Foundation.Arch::ComponentKind.service)})
+  body: (record Foundation.Arch::Component {index := 2, kind := (ctor Foundation.Arch::ComponentKind.cliAdapter), name := "CLI adapter", text := "The command-line adapter that reads a request from a file or standard input and prints the same response as the page."})
 }
 
 definition{
   name: componentReleaseBinaries,
   parameters: [],
   result: Foundation.Arch::Component,
-  body: (record Foundation.Arch::Component {index := 6, kind := (ctor Foundation.Arch::ComponentKind.service)})
+  body: (record Foundation.Arch::Component {index := 6, kind := (ctor Foundation.Arch::ComponentKind.releaseBinary), name := "Release binaries", text := "The release binaries that ship the command-line adapter for each supported platform."})
 }
 
 definition{
