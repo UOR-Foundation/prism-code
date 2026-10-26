@@ -68,7 +68,7 @@ definition{
   name: certify,
   parameters: [project : Core::Project],
   result: Outcome,
-  body: (certifyWith var{name: project} (Compliance::findings var{name: project})),
+  body: (certifyWith var{name: project} (project (Compliance::findings var{name: project}) items)),
   axioms: [Quot.sound, propext]
 }
 
@@ -120,7 +120,7 @@ theorem{
     name: project
   })) = (Compliance::compliant var{name: project})),
   proof: apply{
-    arguments: [var{name: project}, (Compliance::findings var{name: project})],
+    arguments: [var{name: project}, (project (Compliance::findings var{name: project}) items)],
     theorem: certifyWithAcceptsExactly
   },
   axioms: [Quot.sound, propext]
@@ -183,25 +183,23 @@ definition{
 }
 
 definition{
-  name: outcomeLines,
+  name: outcomeText,
   parameters: [outcome : Outcome],
-  result: (List String),
+  result: String,
   body: match{
     branches: [
       {
-        body: (cons "status accepted" (Core::canonicalLines var{name: project})),
+        body: (prim join (cons "status accepted" (cons (Core::canonicalText var{name: project}) (nil String))) "" : String),
         binders: [project],
         constructor: Outcome.Accepted
       },
       {
-        body: (cons "status rejected" (prim append (Compliance::findingLines (Compliance::sortFindings found)) (Core::canonicalLines var{
-          name: project
-        }) : (List String))),
+        body: (prim join (cons "status rejected" (cons (Compliance::findingsText (project (Compliance::sortFindings found) items)) (cons (Core::canonicalText var{name: project}) (nil String)))) "" : String),
         binders: [project, found],
         constructor: Outcome.Rejected
       },
       {
-        body: (cons "status error" (cons (prim join (cons "line" (cons (prim format_decimal (project failure line) : String) (cons (stepErrorCode (project failure error)) (nil String)))) " " : String) (nil String))),
+        body: (prim join (cons "status error\n" (cons (prim join (cons "line" (cons (prim format_decimal (project failure line) : String) (cons (stepErrorCode (project failure error)) (nil String)))) " " : String) (nil String))) "" : String),
         binders: [failure],
         constructor: Outcome.Failed
       }

@@ -15,6 +15,13 @@ inductive{
   ]
 }
 
+structure{
+  name: FindingList,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: items, type: (List Finding)}]
+}
+
 definition{
   name: exceeds,
   parameters: [memory : UInt64, limit : UInt64],
@@ -28,10 +35,10 @@ definition{
 definition{
   name: memoryFindings,
   parameters: [nodes : (List Core::Node), limit : UInt64],
-  result: (List Finding),
+  result: FindingList,
   body: (match nodes
-    | List.nil => (nil Finding)
-    | List.cons head rest => (if (exceeds (project head memory) limit) then (cons (ctor Finding.MemoryExceeded (project head name) (project head memory) limit) (memoryFindings rest limit)) else (memoryFindings rest limit))),
+    | List.nil => (record FindingList {items := (nil Finding)})
+    | List.cons head rest => (if (exceeds (project head memory) limit) then (record FindingList {items := (cons (ctor Finding.MemoryExceeded (project head name) (project head memory) limit) (project (memoryFindings rest limit) items))}) else (memoryFindings rest limit))),
   axioms: [Quot.sound, propext],
   recursive_argument: nodes
 }
@@ -39,9 +46,9 @@ definition{
 definition{
   name: memoryPolicyFindings,
   parameters: [project : Core::Project],
-  result: (List Finding),
+  result: FindingList,
   body: (match (project (project var{name: project} policies) memoryLimit)
-    | Option.none => (nil Finding)
+    | Option.none => (record FindingList {items := (nil Finding)})
     | Option.some limit => (memoryFindings (project var{name: project} nodes) limit)),
   axioms: [Quot.sound, propext]
 }
@@ -56,85 +63,68 @@ definition{
 }
 
 definition{
-  name: spreadEdge,
-  parameters: [
-    edge : Core::Edge,
-    project : Core::Project,
-    labelled : (List String),
-    reached : (List String)
-  ],
-  result: (List String),
-  body: (if ((Core::listsName labelled (project edge source)) && ((carries var{
-    name: project
-  } (project edge source)) && (not (Core::listsName reached (project edge target))))) then (cons (project edge target) reached) else reached)
+  name: spreads,
+  parameters: [edge : Core::Edge, project : Core::Project, labelled : (List String), reached : (List String)],
+  result: Bool,
+  body: ((Core::listsName labelled (project edge source)) && ((carries var{name: project} (project edge source)) && (not (Core::listsName reached (project edge target)))))
 }
 
 definition{
   name: spread,
-  parameters: [
-    edges : (List Core::Edge),
-    project : Core::Project,
-    labelled : (List String),
-    reached : (List String)
-  ],
-  result: (List String),
+  parameters: [edges : (List Core::Edge), project : Core::Project, labelled : (List String), reached : (List String)],
+  result: Core::NameList,
   body: (match edges
-    | List.nil => reached
-    | List.cons head rest => (spread rest var{
-      name: project
-    } labelled (spreadEdge head var{name: project} labelled reached))),
+    | List.nil => (record Core::NameList {items := reached})
+    | List.cons head rest => (if (spreads head var{name: project} labelled reached) then (spread rest var{name: project} labelled (cons (project head target) reached)) else (spread rest var{name: project} labelled reached))),
   recursive_argument: edges
 }
 
 definition{
   name: propagate,
   parameters: [rounds : (List Core::Node), project : Core::Project, labelled : (List String)],
-  result: (List String),
+  result: Core::NameList,
   body: (match rounds
-    | List.nil => labelled
-    | List.cons round rest => (propagate rest var{
-      name: project
-    } (spread (project var{name: project} edges) var{name: project} labelled labelled))),
+    | List.nil => (record Core::NameList {items := labelled})
+    | List.cons round rest => (propagate rest var{name: project} (project (spread (project var{name: project} edges) var{name: project} labelled labelled) items))),
   recursive_argument: rounds
 }
 
 definition{
   name: labelledNodes,
   parameters: [project : Core::Project],
-  result: (List String),
-  body: (propagate (project var{
-    name: project
-  } nodes) var{name: project} (project var{name: project} pii))
+  result: Core::NameList,
+  body: (propagate (project var{name: project} nodes) var{name: project} (project var{name: project} pii))
+}
+
+definition{
+  name: exposesPii,
+  parameters: [node : Core::Node, labelled : (List String)],
+  result: Bool,
+  body: ((Core::isOutput (project node kind)) && (Core::listsName labelled (project node name)))
 }
 
 definition{
   name: piiFindings,
   parameters: [nodes : (List Core::Node), labelled : (List String)],
-  result: (List Finding),
+  result: FindingList,
   body: (match nodes
-    | List.nil => (nil Finding)
-    | List.cons head rest => (if ((Core::isOutput (project head kind)) && (Core::listsName labelled (project head name))) then (cons (ctor Finding.PlaintextPii (project head name)) (piiFindings rest labelled)) else (piiFindings rest labelled))),
+    | List.nil => (record FindingList {items := (nil Finding)})
+    | List.cons head rest => (if (exposesPii head labelled) then (record FindingList {items := (cons (ctor Finding.PlaintextPii (project head name)) (project (piiFindings rest labelled) items))}) else (piiFindings rest labelled))),
   recursive_argument: nodes
 }
 
 definition{
   name: piiPolicyFindings,
   parameters: [project : Core::Project],
-  result: (List Finding),
-  body: (if (project (project var{
-    name: project
-  } policies) piiEncryption) then (piiFindings (project var{
-    name: project
-  } nodes) (labelledNodes var{name: project})) else (nil Finding))
+  result: FindingList,
+  body: (if (project (project var{name: project} policies) piiEncryption) then (piiFindings (project var{name: project} nodes) (project (labelledNodes var{name: project}) items)) else (record FindingList {items := (nil Finding)}))
 }
 
 definition{
   name: findings,
   parameters: [project : Core::Project],
-  result: (List Finding),
-  body: (prim append (memoryPolicyFindings var{
-    name: project
-  }) (piiPolicyFindings var{name: project}) : (List Finding)),
+  result: FindingList,
+  body: (record FindingList {items := (prim append (project (memoryPolicyFindings var{name: project}) items) (project (piiPolicyFindings var{name: project}) items) : (List Finding))}),
   axioms: [Quot.sound, propext]
 }
 
@@ -149,7 +139,7 @@ definition{
   name: compliant,
   parameters: [project : Core::Project],
   result: Bool,
-  body: (noFindings (findings var{name: project})),
+  body: (noFindings (project (findings var{name: project}) items)),
   axioms: [Quot.sound, propext]
 }
 
@@ -180,10 +170,10 @@ definition{
 definition{
   name: insertFinding,
   parameters: [item : Finding, sorted : (List Finding)],
-  result: (List Finding),
+  result: FindingList,
   body: (match sorted
-    | List.nil => (cons item (nil Finding))
-    | List.cons head rest => (if (findingPrecedes item head) then (cons item (cons head rest)) else (cons head (insertFinding item rest)))),
+    | List.nil => (record FindingList {items := (cons item (nil Finding))})
+    | List.cons head rest => (if (findingPrecedes item head) then (record FindingList {items := (cons item (cons head rest))}) else (record FindingList {items := (cons head (project (insertFinding item rest) items))}))),
   axioms: [propext],
   recursive_argument: sorted
 }
@@ -191,21 +181,21 @@ definition{
 definition{
   name: sortFindings,
   parameters: [items : (List Finding)],
-  result: (List Finding),
+  result: FindingList,
   body: (match items
-    | List.nil => (nil Finding)
-    | List.cons head rest => (insertFinding head (sortFindings rest))),
+    | List.nil => (record FindingList {items := (nil Finding)})
+    | List.cons head rest => (insertFinding head (project (sortFindings rest) items))),
   axioms: [propext],
   recursive_argument: items
 }
 
 definition{
-  name: findingLines,
+  name: findingsText,
   parameters: [found : (List Finding)],
-  result: (List String),
+  result: String,
   body: (match found
-    | List.nil => (nil String)
-    | List.cons head rest => (cons (findingLine head) (findingLines rest))),
+    | List.nil => ""
+    | List.cons head rest => (prim join (cons "\n" (cons (findingLine head) (cons (findingsText rest) (nil String)))) "" : String)),
   axioms: [Classical.choice, Quot.sound, propext],
   recursive_argument: found
 }

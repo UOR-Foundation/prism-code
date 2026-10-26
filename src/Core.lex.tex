@@ -49,6 +49,27 @@ structure{
   ]
 }
 
+structure{
+  name: NodeList,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: items, type: (List Node)}]
+}
+
+structure{
+  name: EdgeList,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: items, type: (List Edge)}]
+}
+
+structure{
+  name: NameList,
+  type_parameters: [],
+  parameters: [],
+  fields: [{name: items, type: (List String)}]
+}
+
 inductive{
   name: Violation,
   type_parameters: [],
@@ -242,10 +263,10 @@ definition{
 definition{
   name: insertNode,
   parameters: [item : Node, sorted : (List Node)],
-  result: (List Node),
+  result: NodeList,
   body: (match sorted
-    | List.nil => (cons item (nil Node))
-    | List.cons head rest => (if (precedes (project item name) (project head name)) then (cons item (cons head rest)) else (cons head (insertNode item rest)))),
+    | List.nil => (record NodeList {items := (cons item (nil Node))})
+    | List.cons head rest => (if (precedes (project item name) (project head name)) then (record NodeList {items := (cons item (cons head rest))}) else (record NodeList {items := (cons head (project (insertNode item rest) items))}))),
   axioms: [propext],
   recursive_argument: sorted
 }
@@ -253,10 +274,10 @@ definition{
 definition{
   name: sortNodes,
   parameters: [items : (List Node)],
-  result: (List Node),
+  result: NodeList,
   body: (match items
-    | List.nil => (nil Node)
-    | List.cons head rest => (insertNode head (sortNodes rest))),
+    | List.nil => (record NodeList {items := (nil Node)})
+    | List.cons head rest => (insertNode head (project (sortNodes rest) items))),
   axioms: [propext],
   recursive_argument: items
 }
@@ -264,10 +285,10 @@ definition{
 definition{
   name: insertEdge,
   parameters: [item : Edge, sorted : (List Edge)],
-  result: (List Edge),
+  result: EdgeList,
   body: (match sorted
-    | List.nil => (cons item (nil Edge))
-    | List.cons head rest => (if (edgePrecedes item head) then (cons item (cons head rest)) else (cons head (insertEdge item rest)))),
+    | List.nil => (record EdgeList {items := (cons item (nil Edge))})
+    | List.cons head rest => (if (edgePrecedes item head) then (record EdgeList {items := (cons item (cons head rest))}) else (record EdgeList {items := (cons head (project (insertEdge item rest) items))}))),
   axioms: [propext],
   recursive_argument: sorted
 }
@@ -275,10 +296,10 @@ definition{
 definition{
   name: sortEdges,
   parameters: [items : (List Edge)],
-  result: (List Edge),
+  result: EdgeList,
   body: (match items
-    | List.nil => (nil Edge)
-    | List.cons head rest => (insertEdge head (sortEdges rest))),
+    | List.nil => (record EdgeList {items := (nil Edge)})
+    | List.cons head rest => (insertEdge head (project (sortEdges rest) items))),
   axioms: [propext],
   recursive_argument: items
 }
@@ -286,10 +307,10 @@ definition{
 definition{
   name: insertName,
   parameters: [item : String, sorted : (List String)],
-  result: (List String),
+  result: NameList,
   body: (match sorted
-    | List.nil => (cons item (nil String))
-    | List.cons head rest => (if (precedes item head) then (cons item (cons head rest)) else (cons head (insertName item rest)))),
+    | List.nil => (record NameList {items := (cons item (nil String))})
+    | List.cons head rest => (if (precedes item head) then (record NameList {items := (cons item (cons head rest))}) else (record NameList {items := (cons head (project (insertName item rest) items))}))),
   axioms: [propext],
   recursive_argument: sorted
 }
@@ -297,10 +318,10 @@ definition{
 definition{
   name: sortNames,
   parameters: [items : (List String)],
-  result: (List String),
+  result: NameList,
   body: (match items
-    | List.nil => (nil String)
-    | List.cons head rest => (insertName head (sortNames rest))),
+    | List.nil => (record NameList {items := (nil String)})
+    | List.cons head rest => (insertName head (project (sortNames rest) items))),
   axioms: [propext],
   recursive_argument: items
 }
@@ -330,62 +351,55 @@ definition{
 }
 
 definition{
-  name: nodeLines,
+  name: nodesText,
   parameters: [items : (List Node)],
-  result: (List String),
+  result: String,
   body: (match items
-    | List.nil => (nil String)
-    | List.cons head rest => (cons (nodeLine head) (nodeLines rest))),
+    | List.nil => ""
+    | List.cons head rest => (prim join (cons "\n" (cons (nodeLine head) (cons (nodesText rest) (nil String)))) "" : String)),
   axioms: [Classical.choice, Quot.sound, propext],
   recursive_argument: items
 }
 
 definition{
-  name: edgeLines,
+  name: edgesText,
   parameters: [items : (List Edge)],
-  result: (List String),
+  result: String,
   body: (match items
-    | List.nil => (nil String)
-    | List.cons head rest => (cons (edgeLine head) (edgeLines rest))),
+    | List.nil => ""
+    | List.cons head rest => (prim join (cons "\n" (cons (edgeLine head) (cons (edgesText rest) (nil String)))) "" : String)),
   axioms: [propext],
   recursive_argument: items
 }
 
 definition{
-  name: piiLines,
+  name: namesText,
   parameters: [items : (List String)],
-  result: (List String),
+  result: String,
   body: (match items
-    | List.nil => (nil String)
-    | List.cons head rest => (cons (piiLine head) (piiLines rest))),
+    | List.nil => ""
+    | List.cons head rest => (prim join (cons "\n" (cons (piiLine head) (cons (namesText rest) (nil String)))) "" : String)),
   axioms: [propext],
   recursive_argument: items
 }
 
 definition{
-  name: policyLines,
+  name: policyText,
   parameters: [policies : Policies],
-  result: (List String),
-  body: (prim append (match (project policies memoryLimit)
-    | Option.none => (nil String)
-    | Option.some limit => (cons (prim join (cons "policy" (cons "memory" (cons (prim format_decimal limit : String) (nil String)))) " " : String) (nil String))) (if (project policies piiEncryption) then (cons "policy encrypt-pii" (nil String)) else (nil String)) : (List String)),
+  result: String,
+  body: (prim join (cons (match (project policies memoryLimit)
+    | Option.none => ""
+    | Option.some limit => (prim join (cons "\n" (cons (prim join (cons "policy" (cons "memory" (cons (prim format_decimal limit : String) (nil String)))) " " : String) (nil String))) "" : String)) (cons (if (project policies piiEncryption) then "\npolicy encrypt-pii" else "") (nil String))) "" : String),
   axioms: [Classical.choice, Quot.sound, propext]
 }
 
 definition{
-  name: canonicalLines,
+  name: canonicalText,
   parameters: [project : Project],
-  result: (List String),
-  body: (cons "prism-code/1" (prim append (policyLines (project var{
-    name: project
-  } policies)) (prim append (nodeLines (sortNodes (project var{
-    name: project
-  } nodes))) (prim append (piiLines (sortNames (project var{
-    name: project
-  } pii))) (edgeLines (sortEdges (project var{
-    name: project
-  } edges))) : (List String)) : (List String)) : (List String))),
+  result: String,
+  body: (prim join (cons "\nprism-code/1" (cons (policyText (project var{name: project} policies)) (cons (nodesText (project (sortNodes (project var{name: project} nodes)) items)) (cons (namesText (project (sortNames (project var{name: project} pii)) items)) (cons (edgesText (project (sortEdges (project var{name: project} edges)) items)) (nil String)))))) "" : String),
   axioms: [Classical.choice, Quot.sound, propext]
 }
+
 \end{semanticmodule}
 \end{lexlean}

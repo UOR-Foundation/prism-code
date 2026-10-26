@@ -3,7 +3,7 @@
 default: vv
 
 # The whole gate.
-vv: template-check fmt-check model lint test features bdd deny
+vv: template-check fmt-check model lint build test features bdd deny
     @echo "vv: the acceptance gate passed"
 
 # R1, R4, R5 --- the repository gates, each falsifiable.
@@ -27,6 +27,12 @@ template-check:
 # offline resolution is complete.
 model-write:
     cargo run -q --offline -p xtask -- check-model --write
+
+# The command-line tests drive the program `prismpm build` generates, so the
+# gate checks and builds the application through the locked SDK before `test`.
+build:
+    prismpm check
+    prismpm build
 
 fmt:
     cargo fmt --all

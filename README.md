@@ -60,14 +60,52 @@ generates the program from that record:
 ```
 prism-code check [FILE]    read the script from FILE, or from stdin when FILE
                            is omitted or `-`; print the report unchanged
-prism-code examples [NAME] print a named example script
+prism-code examples [NAME] list the examples, or print one example script
 prism-code --help
-prism-code --version
+prism-code --version       prism-code 0.1.0, from cargoName and cargoVersion
 ```
 
-A request over 4096 bytes is refused before dispatch. Exit codes come from the
-model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
-64, input or output error 74.
+A request over 4096 bytes is refused before dispatch (`InputLimit`, empty
+standard output). Exit codes come from the model: `status accepted` 0,
+`status rejected` 1, `status error` 2, usage error 64, input or output error 74.
+
+`--help` prints the purpose, the statement reference (`STATEMENTS`), the report
+format (`REPORT`), the status texts (`STATUS`), the recovery text for every
+error and finding code (`ERROR AND FINDING CODES`), the example names and the
+exit-code table. The statement, status and code text is the text the page's
+workbench states in `Workbench`; `CL-08` fails if the two differ. Two examples
+check as the page's example buttons do:
+
+```
+prism-code examples accepted | prism-code check
+prism-code examples rejected | prism-code check; echo $?
+```
+
+Every failure of the command line is a typed diagnostic on standard error,
+`prism-code: <Failure>[: <detail>]`, with the exit code of its class. The
+vocabulary is the SDK's closed `TextCliFailure` set (PrismPM
+`model/text-cli-diagnostics.toml`); this repository registers a test for each
+failure a user can cause:
+
+| Failure | Cause | Exit | ID |
+| --- | --- | --- | --- |
+| `UnknownFlag` | an argument starting with `-` that is not `--help`, `--version`, `-` or `--` | 64 | `CL-09` |
+| `ExtraArgument` | a second operand | 64 | `CL-10` |
+| `MissingCommand` | no command | 64 | `CL-11` |
+| `UnknownCommand` | a command other than `check` and `examples` | 64 | `CL-12` |
+| `UnknownExample` | an example name the model does not declare | 64 | `CL-13` |
+| `InputMissing` | the path does not exist | 74 | `CL-14` |
+| `InputOpen` | the path cannot be opened | 74 | `CL-15` |
+| `InputType` | the path is a directory or a symbolic link | 74 | `CL-16` |
+| `InputRead` | reading failed after the request was opened | 74 | `CL-17` |
+| `OutputWrite` | standard output is closed or full | 74 | `CL-18` |
+| `InputLimit` | the request exceeds 4096 bytes | 2 | `CL-03` |
+
+The tests are `crates/conformance/tests/cli/` (`CL-01` to `CL-18`, scenarios in
+`features/suites/cli.feature`). They drive the program that `prismpm build`
+publishes at `.prism/build/<id>/cli/bin/<host target>/prism-code`, or the
+program named by `PRISM_CODE_CLI`, and take every expectation from the model
+sources. They fail, rather than skip, when no program has been built.
 
 ## Repository layout
 
