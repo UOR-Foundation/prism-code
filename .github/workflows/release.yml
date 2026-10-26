@@ -41,11 +41,13 @@ jobs:
             exit 64
           fi
           printf 'image=%s\n' "$image" >> "$GITHUB_OUTPUT"
-      - uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758 # prismpm-action-input
+      - name: Fetch the locked SDK
+        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
         with:
           command: fetch
           sdk-image: ${{ steps.sdk.outputs.image }}
-      - uses: UOR-Foundation/PrismPM/action@c4008ca32cfb21752948d709fa2dc0bb9edec758 # prismpm-action-input
+      - name: Build the release
+        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
         with:
           command: build
           reference: ghcr.io/uor-foundation/prism-code:${{ github.ref_name }}
