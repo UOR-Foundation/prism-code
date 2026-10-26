@@ -53,9 +53,9 @@ numbered from 1 in list order. Each vector is executed by
 | `line N duplicate-pii` | `Interaction.admitPii` | 23 |
 | `line N duplicate-policy` | `Interaction.admitMemoryPolicy` (second `policy memory`) | 24 |
 | `line N duplicate-policy` | `Interaction.admitPiiPolicy` (second `policy encrypt-pii`) | 25 |
-| `request too-many-lines` | `Specification.dispatchText` | none: unreachable, see below |
+| `request too-many-lines` | `Specification.dispatchText` | none: unreachable, see below (`BD-04`) |
 | `line N line-overflow` | `Engine.runLines` | none: unreachable, see below |
-| `response too-large` | `Specification.respond` | none: unreachable, see below |
+| `response too-large` | `Specification.respond` | none: unreachable, see below (`BD-06`) |
 
 ### Codes with no vector
 
@@ -63,7 +63,9 @@ A request is at most 4096 bytes (`requestMaximum`), so:
 
 - `request too-many-lines`: `dispatchText` allows 4097 lines. 4096 bytes hold
   at most 4096 newline bytes, hence at most 4097 lines, which is the limit.
-  Vector 12 is the boundary case (4096 bytes, 4097 lines, accepted).
+  A request of 4096 newlines has 4097 lines and is still split (its first line
+  is then refused as `missing-header`). Vector 12 is the longest script (4096
+  bytes, accepted), and vector 13 (4097 bytes) is refused as `too-large`.
 - `line-overflow`: `Engine.runLines` starts counting at line 1 and fails only
   when the `UInt32` counter would pass 2^32 - 1, which needs more than 2^32
   lines. A request has at most 4097.
@@ -80,3 +82,22 @@ These three arguments are not machine-checked. The proof language
 `UInt32` `checked_add`, so the bounds cannot yet be stated as theorems over the
 primitives. The branches stay in the model, and the table row is the open
 obligation: a theorem or a vector must replace it when the lemmas exist.
+
+## Capability suites
+
+The generated program is also held to each capability the model claims, one
+registered ID per rule (`model/ids.toml`), run on the program `prismpm build`
+generates:
+
+| Suite | IDs | Claims |
+| --- | --- | --- |
+| `script` | `SC-01` to `SC-10` | the five statement forms and the five parse errors |
+| `admission` | `AD-01` to `AD-10` | the nine admission violations and the canonical form |
+| `compliance` | `CP-01` to `CP-05` | the memory and plaintext-PII findings, their order, acceptance only if compliant, no policy and no finding |
+| `boundary` | `BD-01` to `BD-07` | the request and response boundaries, including exactly 4096 and 4097 bytes |
+
+Vector 30 is the project in which PII reaches two outputs, one through
+`encrypt` and one not; it reports exactly one `plaintext-pii` finding (`CP-02`).
+`BD-04` and `BD-06` hold the two unreachable refusals to the arithmetic over the
+modeled limits and to the densest request, because the model has no theorem for
+either bound.

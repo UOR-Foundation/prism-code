@@ -18,6 +18,33 @@ The three honesty levels (R2):
 `cargo xtask audit-limits` fails if any code path returns an error the
 model does not sanction.
 
+## admission
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `AD-01` | `build` | A node whose name is already declared is refused with line N duplicate-node, whatever its kind (acceptance vector 6); Interaction.addNodeAdmission with Core.gateAdmitsExactly says it is admitted exactly when admitNode admits it. |
+| `AD-02` | `build` | An edge with an undeclared endpoint or a pii mark on an undeclared node is refused with line N unknown-node, and existence is checked before the self-edge rule (acceptance vector 5); Interaction.addEdgeAdmission and Interaction.markPiiAdmission with Core.gateAdmitsExactly back both cases. |
+| `AD-03` | `build` | An edge from a node to itself is refused with line N self-edge, ahead of the rules about node kinds (acceptance vector 18); Interaction.addEdgeAdmission with Core.gateAdmitsExactly backs it. |
+| `AD-04` | `build` | An edge declared twice is refused with line N duplicate-edge, while the reverse edge is a different edge (acceptance vector 19); Interaction.addEdgeAdmission with Core.gateAdmitsExactly backs it. |
+| `AD-05` | `build` | An edge whose source is an output node is refused with line N output-source, whatever the target kind (acceptance vector 20); Interaction.addEdgeAdmission with Core.gateAdmitsExactly backs it. |
+| `AD-06` | `build` | An edge whose target is an input node is refused with line N input-target (acceptance vector 21); Interaction.addEdgeAdmission with Core.gateAdmitsExactly backs it. |
+| `AD-07` | `build` | A pii mark on a node that is not an input is refused with line N not-an-input (acceptance vector 22); Interaction.markPiiAdmission with Core.gateAdmitsExactly backs it. |
+| `AD-08` | `build` | An input marked as PII twice is refused with line N duplicate-pii (acceptance vector 23); Interaction.markPiiAdmission with Core.gateAdmitsExactly backs it. |
+| `AD-09` | `build` | A second policy memory or a second policy encrypt-pii is refused with line N duplicate-policy, even with the same value or with the other policy between (acceptance vectors 24 and 25); Interaction.requireMemoryAdmission and Interaction.requirePiiEncryptionAdmission with Core.gateAdmitsExactly back it. |
+| `AD-10` | `build` | The canonical form is the header, the policies with memory before encrypt-pii, the nodes sorted by name, the PII names sorted and the edges sorted by source then target, with names compared by bytes, so the shuffled script with a blank line (acceptance vector 2) and the sorted script (acceptance vector 3) give the same bytes. |
+
+## boundary
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `BD-01` | `build` | An empty request is refused with request empty (acceptance vector 11). |
+| `BD-02` | `build` | A request of exactly 4097 bytes is refused as request too-large (acceptance vector 13): the command line refuses it before dispatch with InputLimit, and the verification evidence holds the Core-Wasm entry and the browser view to the modeled report. |
+| `BD-03` | `build` | A request that is not valid UTF-8 is refused with request invalid-utf8, wherever the invalid byte is (acceptance vector 10). |
+| `BD-04` | `build` | A request cannot exceed the 4097-line limit of request too-many-lines within the 4096-byte request maximum, because N bytes hold at most N newlines and N + 1 lines, so no acceptance vector produces it: the request of 4096 newlines has 4097 lines and is still split, and one byte more is refused as too large. |
+| `BD-05` | `build` | A request whose first line is not the script header is refused with line 1 missing-header, including a changed version, a trailing space, a different case and a blank first line (acceptance vector 9). |
+| `BD-06` | `build` | A response cannot exceed the 16384-byte limit of response too-large from a request within the 4096-byte maximum, so no acceptance vector produces it: the densest request found, PII from one input to the most outputs over a memory limit of zero, gives a response under the limit. |
+| `BD-07` | `build` | A request of exactly 4096 bytes is accepted, and so is one byte fewer (acceptance vector 12). |
+
 ## cli
 
 | ID | Level | Statement |
@@ -41,11 +68,36 @@ model does not sanction.
 | `CL-17` | `build` | A request that fails while it is being read is refused with the InputRead diagnostic on standard error, the model's I/O code and empty standard output. |
 | `CL-18` | `build` | A report that cannot be written to standard output is refused with the OutputWrite diagnostic on standard error and the model's I/O code. |
 
+## compliance
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `CP-01` | `build` | A node whose memory exceeds the policy memory limit is reported as finding memory NODE USED exceeds LIMIT and a node at the limit is not (acceptance vector 4); Compliance.oversizedPipelineDetected proves an oversized pipeline is not compliant. |
+| `CP-02` | `build` | PII that reaches an output node without passing an encrypt node is reported as finding plaintext-pii NODE, and a project where PII reaches two outputs, one through encrypt and one not, reports exactly one such finding (acceptance vector 30); Compliance.bypassedPipelineDetected proves a bypass is detected and Compliance.encryptedPipelineCompliant proves the encrypted pipeline is compliant. |
+| `CP-03` | `build` | Findings are printed with every memory finding before every plaintext-pii finding, and each kind in order of node name bytes, whatever the order of the statements (acceptance vector 4); Compliance.findings builds the list and Compliance.sortFindings orders it. |
+| `CP-04` | `build` | A project is accepted only if it has no finding, a project with a finding is rejected, and a run that fails on a line is an error and never accepted; Engine.certifyRequiresCompliance, Engine.completedRunAcceptedOnlyIfCompliant and Engine.failedRunNeverAccepted prove it. |
+| `CP-05` | `build` | A policy that the script does not declare produces no finding: no memory policy means no memory finding and no encrypt-pii policy means no plaintext-pii finding, so the project is accepted; Engine.certifyRequiresCompliance says an empty list of findings is accepted. |
+
 ## parity
 
 | ID | Level | Statement |
 | --- | --- | --- |
 | `PA-01` | `build` | For every acceptance vector, the response bytes that prismpm verify holds the Core-Wasm entry and the browser view to equal what the generated command line prints, and a vector the command line refuses before or instead of dispatch is compared by that refusal; verification evidence that attests the program under test must exist, and a changed command-line output fails the comparison. |
+
+## script
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `SC-01` | `build` | Interaction.parseNodeFields reads node NAME KIND MEMORY for each of the kinds input, operator, encrypt and output, and the generated program accepts a script of such a statement and prints it back as its canonical form. |
+| `SC-02` | `build` | Interaction.parseEdgeFields reads edge SOURCE TARGET, and the generated program accepts a script that connects two declared nodes and prints the edge in its canonical form. |
+| `SC-03` | `build` | Interaction.parsePiiFields reads pii NAME, and the generated program accepts the mark on an input node, prints it in its canonical form and reports no finding while the encrypt-pii policy is absent. |
+| `SC-04` | `build` | Interaction.parsePolicyFields reads policy memory LIMIT, and the generated program accepts it, prints it first among the statements of the canonical form and does not count a node at the limit as over it. |
+| `SC-05` | `build` | Interaction.parsePolicyFields reads policy encrypt-pii with no operand, and the generated program accepts it and prints it in its canonical form. |
+| `SC-06` | `build` | A line whose command is not node, edge, pii or policy, or whose policy is not memory or encrypt-pii, is refused with line N unknown-command, where N counts blank lines (acceptance vector 14). |
+| `SC-07` | `build` | A statement with too few or too many operands, including a line of more than five fields, is refused with line N wrong-arity (acceptance vector 15). |
+| `SC-08` | `build` | A line with an empty field, from a doubled, leading or trailing space, is refused with line N empty-field before its command is read (acceptance vector 8). |
+| `SC-09` | `build` | A node whose kind is not input, operator, encrypt or output is refused with line N unknown-kind, ahead of the memory being read (acceptance vector 7). |
+| `SC-10` | `build` | A node memory or memory limit that is not an unsigned 64-bit decimal is refused with line N invalid-number (acceptance vectors 16 and 17). |
 
 ## Cited authorities
 
