@@ -18,7 +18,8 @@ in `lexlean.lock` (`lexlean/lock/2`). Its product identifiers (`dataflow-policy`
 `dataflow-policy/1` script header, and the repository and Pages URLs) are bound by the application model
 digest in `System`, which `prismpm check` reports and the model carries. The
 Lean project name and namespace (`PrismCode` in `lexlean.toml`, `lakefile.toml`
-and `lake-manifest.json`) and the `prism.arch` label-word entries are pinned by
+and `lake-manifest.json`), the `prism.arch` label-word entries and the module
+titles bound to them ("Prism-code system model" and the like) are pinned by
 `lexlean.lock` and change only through a `lexlean lock` run. They are internal
 and are not product identifiers: `prism-code` names only the npm SDK package.
 
