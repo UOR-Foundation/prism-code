@@ -1,4 +1,4 @@
-//! The generated command line (`CL-01` through `CL-18`).
+//! The generated command line (`CL-01` through `CL-18`, `PA-01`).
 //!
 //! The program is generated from the application model by `prismpm build`;
 //! nothing in this repository implements it (R1). These tests drive the built
@@ -8,9 +8,11 @@
 //! set `PRISM_CODE_CLI` to the program.
 
 mod check;
+mod evidence;
 mod failures;
 mod help;
 mod model;
+mod parity;
 mod program;
 mod source;
 

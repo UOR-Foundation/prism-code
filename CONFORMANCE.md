@@ -41,6 +41,12 @@ model does not sanction.
 | `CL-17` | `build` | A request that fails while it is being read is refused with the InputRead diagnostic on standard error, the model's I/O code and empty standard output. |
 | `CL-18` | `build` | A report that cannot be written to standard output is refused with the OutputWrite diagnostic on standard error and the model's I/O code. |
 
+## parity
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `PA-01` | `build` | For every acceptance vector, the response bytes that prismpm verify holds the Core-Wasm entry and the browser view to equal what the generated command line prints, and a vector the command line refuses before or instead of dispatch is compared by that refusal; verification evidence that attests the program under test must exist, and a changed command-line output fails the comparison. |
+
 ## Cited authorities
 
 Never re-derived, vendored, or gated on.
