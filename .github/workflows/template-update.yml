@@ -135,6 +135,8 @@ jobs:
         with:
           name: template-update-proposal
           if-no-files-found: error
+          # The patch is a dotfile; upload-artifact skips hidden files by default.
+          include-hidden-files: true
           path: .template-update.patch
           retention-days: 1
 

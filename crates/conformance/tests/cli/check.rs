@@ -21,7 +21,7 @@ fn check_reads_a_file_dash_and_stdin_alike_cl_01() {
     let scratch = Scratch::new();
     let mut checked = 0;
     for (index, vector) in cli.vectors.iter().enumerate() {
-        if vector.request.len() > cli.request_maximum {
+        if vector.request.len() > cli.request_maximum || cli.is_framed(&vector.request) {
             continue;
         }
         let path = scratch.file("request", &vector.request);
@@ -74,7 +74,7 @@ fn exit_status_is_the_modeled_outcome_code_cl_02() {
 
     let mut seen = BTreeSet::new();
     for (index, vector) in cli.vectors.iter().enumerate() {
-        if vector.request.len() > cli.request_maximum {
+        if vector.request.len() > cli.request_maximum || cli.is_framed(&vector.request) {
             continue;
         }
         let outcome = cli
@@ -114,7 +114,7 @@ fn an_oversized_request_is_refused_before_dispatch_cl_03() {
         "the model declares no vector over the request maximum"
     );
     requests.push(vec![b'a'; cli.request_maximum + 1]);
-    let fault = i32::from(cli.outcome("error").exit_code);
+    let fault = i32::from(cli.limit_exit_code());
     let binary = &cli.cargo_name;
     let scratch = Scratch::new();
     for request in requests {

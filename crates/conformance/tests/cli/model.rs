@@ -68,6 +68,8 @@ pub struct Cli {
     pub usage_code: u8,
     /// Exit status of every input or output failure.
     pub io_code: u8,
+    /// Exit status of a refused oversized request, when the model declares one.
+    pub limit_code: Option<u8>,
     /// The exit-code map.
     pub outcomes: Vec<Outcome>,
     /// Help sections in declaration order.
@@ -76,6 +78,8 @@ pub struct Cli {
     pub examples: Vec<Example>,
     /// Acceptance vectors in declaration order.
     pub vectors: Vec<Vector>,
+    /// Request prefixes the workbench frames its guided and raw requests with.
+    pub frame_prefixes: Vec<String>,
 }
 
 impl Cli {
@@ -84,6 +88,24 @@ impl Cli {
         self.outcomes
             .iter()
             .find(|outcome| report.starts_with(outcome.prefix.as_bytes()))
+    }
+
+    /// Exit status of a request over the request maximum: the declared limit
+    /// code, or that of the `error` outcome when the model declares none.
+    pub fn limit_exit_code(&self) -> u8 {
+        self.limit_code
+            .unwrap_or_else(|| self.outcome("error").exit_code)
+    }
+
+    /// Whether the workbench frames this request: a modeled request prefix
+    /// followed by U+001F. The page answers a framed request in its own JSON
+    /// result protocol, so the command line has no report class for it.
+    pub fn is_framed(&self, request: &[u8]) -> bool {
+        self.frame_prefixes.iter().any(|prefix| {
+            request
+                .strip_prefix(prefix.as_bytes())
+                .is_some_and(|rest| rest.first() == Some(&0x1f))
+        })
     }
 
     /// The outcome with this name.
@@ -171,6 +193,15 @@ impl<'a> Cursor<'a> {
         Err("unterminated string literal".to_owned())
     }
 
+    fn identifier(&mut self) -> String {
+        let name: String = self.text[self.at..]
+            .chars()
+            .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+            .collect();
+        self.at += name.len();
+        name
+    }
+
     fn number(&mut self) -> Result<u64, String> {
         let digits: String = self.text[self.at..]
             .chars()
@@ -238,7 +269,15 @@ fn read(path: &Path) -> Result<String, String> {
 fn cli(root: &Path) -> Result<Cli, String> {
     let spec = read(&root.join("src/Specification.lex.tex"))?;
     let system = read(&root.join("src/System.lex.tex"))?;
+    let guide = read(&root.join("src/Guide.lex.tex"))?;
     let usize_of = |value: u64| usize::try_from(value).map_err(|e| e.to_string());
+    let mut limit = field(&spec, "limitCode := (ctor Option.")?;
+    let limit_code = if limit.text[limit.at..].starts_with("none [UInt8])") {
+        None
+    } else {
+        limit.expect("some [UInt8] (")?;
+        Some(small(limit.number()?, "limitCode")?)
+    };
     let mut outcomes = Vec::new();
     for mut at in records(&spec, "TextCliOutcome {name := ") {
         let name = at.string()?;
@@ -279,6 +318,10 @@ fn cli(root: &Path) -> Result<Cli, String> {
             response: at.bytes()?,
         });
     }
+    let mut frame_prefixes = Vec::new();
+    for mut at in records(&guide, "requestPrefix := ") {
+        frame_prefixes.push(at.string()?);
+    }
     Ok(Cli {
         cargo_name: field(&spec, "cargoName := ")?.string()?,
         cargo_version: field(&spec, "cargoVersion := ")?.string()?,
@@ -288,10 +331,12 @@ fn cli(root: &Path) -> Result<Cli, String> {
         description: field(&spec, "description := ")?.string()?,
         usage_code: small(field(&spec, "usageCode := (")?.number()?, "usageCode")?,
         io_code: small(field(&spec, "ioCode := (")?.number()?, "ioCode")?,
+        limit_code,
         outcomes,
         sections,
         examples,
         vectors,
+        frame_prefixes,
     })
 }
 
@@ -323,6 +368,7 @@ fn definition<'a>(text: &'a str, name: &str) -> Result<&'a str, String> {
 
 fn guidance(root: &Path) -> Result<Guidance, String> {
     let workbench = read(&root.join("src/Workbench.lex.tex"))?;
+    let guide = read(&root.join("src/Guide.lex.tex"))?;
     let engine = read(&root.join("src/Engine.lex.tex"))?;
     let mut forms = Vec::new();
     for mut at in records(&workbench, "StatementForm {usage := ") {
@@ -333,8 +379,21 @@ fn guidance(root: &Path) -> Result<Guidance, String> {
     let mut statuses = Vec::new();
     for mut at in records(&workbench, "StatusText {name := ") {
         let name = at.string()?;
-        at.expect(", text := ")?;
-        statuses.push((name, at.string()?));
+        at.expect(", text := (Guide::")?;
+        let source = at.identifier();
+        at.expect(")")?;
+        let marker = format!("name: {source},");
+        let start = guide
+            .find(&marker)
+            .ok_or_else(|| format!("Guide has no definition named {source}"))?;
+        let body = guide[start..]
+            .find(" body: ")
+            .ok_or_else(|| format!("Guide definition {source} has no body"))?;
+        let mut text = Cursor {
+            text: &guide,
+            at: start + body + " body: ".len(),
+        };
+        statuses.push((name, text.string()?));
     }
     let mut examples = Vec::new();
     for mut at in records(&workbench, "ExampleSpec {name := ") {
