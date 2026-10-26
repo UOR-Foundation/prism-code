@@ -98,6 +98,23 @@ model: `status accepted` 0, `status rejected` 1, `status error` 2, usage error
 | `Design` | the OPM (ISO/PAS 19450) process model and the UML component, sequence and state machine views of the architecture, each element checked against the architecture and system models |
 | `Foundation.Arch` | the architecture and design-view vocabulary (copy of the PrismPM stdlib module at PrismPM#234) |
 
+## Open in a codespace
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/UOR-Foundation/prism-code?quickstart=1&devcontainer_path=.devcontainer%2Fcodespaces%2Fdevcontainer.json)
+
+The badge opens a codespace on the digest-pinned SDK image with Docker, Lean and
+Rust ready; nothing is installed on your machine. Its configuration is
+[`.devcontainer/codespaces/devcontainer.json`](.devcontainer/codespaces/devcontainer.json),
+separate from the local [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json),
+which is template policy bound by `template.lock` and stays as it is. The
+codespace shares the host's Docker daemon, so `npx prism-code@0.2.0 check`
+and `build` start the SDK image the codespace is already running on (no second
+download; measured with the devcontainer CLI on a CI runner). **Not usable yet:**
+the SDK image (14.8 GB on disk) does not fit the 32 GB disk of the machine types
+offered to this repository, so a codespace currently fails to start with
+`no space left on device`. To just try a verified Prism application with no SDK image,
+use the [template's try page](https://uor-foundation.github.io/template/).
+
 ## Toolchain
 
 prism-code is built with LexLean and the PrismPM SDK, used only through the
