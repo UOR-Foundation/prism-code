@@ -3,11 +3,10 @@ name: codespaces devcontainer
 # The Codespaces configuration builds with the devcontainer CLI (as a codespace
 # does), shares the host Docker daemon with the SDK image, and runs
 # `npx prism-code check` and `build` on the Calculator example the SDK image
-# ships. Path-filtered so it does not add a 5.5 GB pull to unrelated pull requests.
+# ships. Main only (path-filtered): a pull request runs exactly one CI job
+# (bootstrap), and this 5.5 GB pull is heavy work that belongs after the merge.
 
 on:
-  pull_request:
-    paths: ['.devcontainer/codespaces/**', '.github/workflows/codespaces-devcontainer.yml']
   push:
     branches: [main]
     paths: ['.devcontainer/codespaces/**', '.github/workflows/codespaces-devcontainer.yml']

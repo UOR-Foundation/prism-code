@@ -1,0 +1,72 @@
+# Publishes the verified browser view to GitHub Pages
+# (https://uor-foundation.github.io/prism-code/). Adapted from the PrismPM
+# starter action/starter/publish-pages.yml (PrismPM#205). Main pushes and
+# release tags only; never pull requests. One job on one runner.
+name: pages
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: build, check and deploy the browser application
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
+    steps:
+      - name: Check out the exact event revision without credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: lock
+        name: Resolve the locked SDK image and the local build destination
+        shell: bash
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          image=$(sed -n 's/.*"sdk_image":"\([^"]*\)".*/\1/p' prismpm.lock)
+          if [[ ! $image =~ ^[a-z0-9.-]+(:[0-9]{1,5})?/[a-z0-9./_-]+@sha256:[0-9a-f]{64}$ ]]; then
+            printf '%s\n' 'prismpm.lock does not select an immutable SDK image' >&2
+            exit 64
+          fi
+          printf 'sdk-image=%s\n' "$image" >> "$GITHUB_OUTPUT"
+          # The tagged destination names the local release only; nothing is pushed.
+          printf 'reference=ghcr.io/%s:pages\n' "${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - name: Fetch the locked SDK inputs
+        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
+        with:
+          command: fetch
+          sdk-image: ${{ steps.lock.outputs.sdk-image }}
+      - id: pages
+        name: Build once, export the browser closure and check it against the system manifest
+        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
+        with:
+          command: publish-pages
+          output: pages
+          reference: ${{ steps.lock.outputs.reference }}
+          sdk-image: ${{ steps.lock.outputs.sdk-image }}
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+      - name: Upload the checked closure as the Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: ${{ steps.pages.outputs.pages-path }}
+      - id: deployment
+        name: Deploy the uploaded closure without rebuilding
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
