@@ -60,6 +60,10 @@ pub struct Cli {
     pub product_version: String,
     /// Largest request, in bytes.
     pub request_maximum: usize,
+    /// Most lines `dispatchText` splits a request into before it refuses it.
+    pub line_maximum: usize,
+    /// Largest response, in bytes, before `respondText` replaces it.
+    pub response_maximum: usize,
     /// Subcommand that checks a request.
     pub command: String,
     /// Purpose paragraph, with its trailing newline.
@@ -258,6 +262,36 @@ fn records<'a>(text: &'a str, marker: &str) -> Vec<Cursor<'a>> {
         .collect()
 }
 
+/// The number `dispatchText` passes to the text splitter as its line limit.
+fn line_maximum(spec: &str) -> Result<u64, String> {
+    // Assembled from parts: the repository scan for a handwritten
+    // implementation (`CL-04`) reads this file too.
+    field(spec, &format!("prim {}_exact text \"\\n\" (", "split"))?.number()
+}
+
+/// The number `respondText` compares the response length with.
+fn response_maximum(spec: &str) -> Result<u64, String> {
+    let marker = " <? (prim length (prim utf8_encode body : Bytes) : Nat))";
+    let count = spec.matches(marker).count();
+    if count != 1 {
+        return Err(format!("{marker:?} occurs {count} times, expected once"));
+    }
+    let end = spec
+        .find(marker)
+        .ok_or_else(|| format!("{marker:?} is absent"))?;
+    let digits: String = spec[..end]
+        .chars()
+        .rev()
+        .take_while(char::is_ascii_digit)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .collect();
+    digits
+        .parse()
+        .map_err(|_| format!("no response limit before {marker:?}"))
+}
+
 fn small(value: u64, what: &str) -> Result<u8, String> {
     u8::try_from(value).map_err(|_| format!("{what} {value} exceeds UInt8"))
 }
@@ -327,6 +361,8 @@ fn cli(root: &Path) -> Result<Cli, String> {
         cargo_version: field(&spec, "cargoVersion := ")?.string()?,
         product_version: field(&system, "productVersion := ")?.string()?,
         request_maximum: usize_of(field(&spec, "requestMaximum := (")?.number()?)?,
+        line_maximum: usize_of(line_maximum(&spec)?)?,
+        response_maximum: usize_of(response_maximum(&spec)?)?,
         command: field(&spec, "command := ")?.string()?,
         description: field(&spec, "description := ")?.string()?,
         usage_code: small(field(&spec, "usageCode := (")?.number()?, "usageCode")?,

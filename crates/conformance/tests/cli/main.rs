@@ -1,4 +1,5 @@
-//! The generated command line (`CL-01` through `CL-18`, `PA-01`).
+//! The generated command line (`CL-01` through `CL-18`, `PA-01`) and its
+//! script, admission, compliance and boundary capabilities (`SC`, `AD`, `CP`, `BD`).
 //!
 //! The program is generated from the application model by `prismpm build`;
 //! nothing in this repository implements it (R1). These tests drive the built
@@ -7,13 +8,18 @@
 //! every usage and input or output failure (R5). Run `prismpm build` first, or
 //! set `DATAFLOW_POLICY_CLI` to the program.
 
+mod admission;
+mod boundary;
 mod check;
+mod compliance;
 mod evidence;
 mod failures;
 mod help;
 mod model;
 mod parity;
 mod program;
+mod report;
+mod script;
 mod source;
 
 use std::path::{Path, PathBuf};
