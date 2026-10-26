@@ -1,12 +1,15 @@
 # Publishes the verified browser view to GitHub Pages
-# (https://uor-foundation.github.io/prism-code/). Adapted from the PrismPM
-# starter action/starter/publish-pages.yml (PrismPM#205). Main pushes and
-# release tags only; never pull requests. One job on one runner.
+# (https://uor-foundation.github.io/prism-code/). Main pushes and release tags
+# only; never pull requests. One job on one runner.
 #
-# No `fetch` step: building the browser view needs only the SDK image, as in
-# the bootstrap gate, while `fetch --locked` downloads every standards
-# authority, including OSV snapshot generations the publisher has since
-# deleted (404), so it fails without affecting what is published.
+# The application is checked, built and verified through the locked SDK exactly
+# as the bootstrap gate does (`prismpm check`, `build`, `verify`), and the
+# verified `view/browser` closure is what is uploaded. `prismpm verify` holds
+# that closure to the build manifest and every acceptance vector before upload.
+# The SDK action's `publish-pages` command is not used: it builds `--locked`,
+# which needs `fetch --locked` to fill the authority cache, and that fetch fails
+# on standards.lock OSV snapshot URLs the publisher has deleted
+# (UOR-Foundation/PrismPM#374).
 name: pages
 
 on:
@@ -39,11 +42,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - id: lock
-        name: Resolve the locked SDK image and the local build destination
+      - id: pages
+        name: Check, build and verify through the locked SDK, then stage the browser view
         shell: bash
-        env:
-          REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
           image=$(sed -n 's/.*"sdk_image":"\([^"]*\)".*/\1/p' prismpm.lock)
@@ -51,17 +52,22 @@ jobs:
             printf '%s\n' 'prismpm.lock does not select an immutable SDK image' >&2
             exit 64
           fi
-          printf 'sdk-image=%s\n' "$image" >> "$GITHUB_OUTPUT"
-          # The tagged destination names the local release only; nothing is pushed.
-          printf 'reference=ghcr.io/%s:pages\n' "${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-      - id: pages
-        name: Build once, export the browser closure and check it against the system manifest
-        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
-        with:
-          command: publish-pages
-          output: pages
-          reference: ${{ steps.lock.outputs.reference }}
-          sdk-image: ${{ steps.lock.outputs.sdk-image }}
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=2g \
+            --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --volume "$PWD:$PWD" \
+            --workdir "$PWD" \
+            --env HOME=/tmp/prismpm-home \
+            --env PRISMPM_EPHEMERAL_HOME=1 \
+            "$image" bash -c 'set -euo pipefail; prismpm check; prismpm build; prismpm verify'
+          browser=$(ls -td .prism/build/*/view/browser | head -n 1)
+          test -f "$browser/index.html"
+          mkdir -p _site
+          cp -a "$browser"/. _site/
+          ls -l _site
+          printf 'pages-path=_site\n' >> "$GITHUB_OUTPUT"
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
       - name: Upload the checked closure as the Pages artifact
