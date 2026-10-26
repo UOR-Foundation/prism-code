@@ -1,6 +1,6 @@
-# prism-code
+# dataflow-policy
 
-prism-code checks a Prism dataflow project script against its declared memory
+dataflow-policy checks a Prism dataflow project script against its declared memory
 and PII-encryption policies, and emits the project's canonical form. It is a
 Prism application: its behavior is authored once in LexLean (`src/*.lex.tex`)
 and PrismPM generates the verified browser application (GitHub Pages) and the
@@ -11,18 +11,22 @@ written by hand outside the model.
 
 Development, version 0.1.0. The authoritative model is committed; the SDK
 binding, generated artifacts, CLI, and Pages deployment are not yet in place.
-The work is tracked in the prism-code GitHub project and its milestones.
+The work is tracked in the dataflow-policy GitHub project and its milestones.
 
 The model is LexLean language 1.2 notation, built with LexLean v0.4 and locked
-in `lexlean.lock` (`lexlean/lock/2`). Its product identifiers (`prism-code`,
-`PrismCode`, the `prism-code/1` script header, and the repository and Pages
-URLs) are bound by the application model digest in `System` and by the lock, so
-they change only through the LexLean and PrismPM toolchain, not by hand.
+in `lexlean.lock` (`lexlean/lock/2`). Its product identifiers (`dataflow-policy`, the
+`dataflow-policy/1` script header, and the repository and Pages URLs) are bound by the application model
+digest in `System`, which `prismpm check` reports and the model carries. The
+Lean project name and namespace (`PrismCode` in `lexlean.toml`, `lakefile.toml`
+and `lake-manifest.json`), the `prism.arch` label-word entries and the module
+titles bound to them ("Prism-code system model" and the like) are pinned by
+`lexlean.lock` and change only through a `lexlean lock` run. They are internal
+and are not product identifiers: `prism-code` names only the npm SDK package.
 
 ## What it does
 
 A request is UTF-8 text of at most 4096 bytes. The first line is the header
-`prism-code/1`; each further non-empty line is one statement:
+`dataflow-policy/1`; each further non-empty line is one statement:
 
 | Statement | Meaning |
 | --- | --- |
@@ -58,11 +62,11 @@ description, help sections, named examples and exit-code map. PrismPM
 generates the program from that record:
 
 ```
-prism-code check [FILE]    read the script from FILE, or from stdin when FILE
+dataflow-policy check [FILE]    read the script from FILE, or from stdin when FILE
                            is omitted or `-`; print the report unchanged
-prism-code examples [NAME] list the examples, or print one example script
-prism-code --help
-prism-code --version       prism-code 0.1.0, from cargoName and cargoVersion
+dataflow-policy examples [NAME] list the examples, or print one example script
+dataflow-policy --help
+dataflow-policy --version       dataflow-policy 0.1.0, from cargoName and cargoVersion
 ```
 
 A request over 4096 bytes is refused before dispatch (`InputLimit`, empty
@@ -77,12 +81,12 @@ workbench states in `Workbench`; `CL-08` fails if the two differ. Two examples
 check as the page's example buttons do:
 
 ```
-prism-code examples accepted | prism-code check
-prism-code examples rejected | prism-code check; echo $?
+dataflow-policy examples accepted | dataflow-policy check
+dataflow-policy examples rejected | dataflow-policy check; echo $?
 ```
 
 Every failure of the command line is a typed diagnostic on standard error,
-`prism-code: <Failure>[: <detail>]`, with the exit code of its class. The
+`dataflow-policy: <Failure>[: <detail>]`, with the exit code of its class. The
 vocabulary is the SDK's closed `TextCliFailure` set (PrismPM
 `model/text-cli-diagnostics.toml`); this repository registers a test for each
 failure a user can cause:
@@ -103,8 +107,8 @@ failure a user can cause:
 
 The tests are `crates/conformance/tests/cli/` (`CL-01` to `CL-18`, scenarios in
 `features/suites/cli.feature`). They drive the program that `prismpm build`
-publishes at `.prism/build/<id>/cli/bin/<host target>/prism-code`, or the
-program named by `PRISM_CODE_CLI`, and take every expectation from the model
+publishes at `.prism/build/<id>/cli/bin/<host target>/dataflow-policy`, or the
+program named by `DATAFLOW_POLICY_CLI`, and take every expectation from the model
 sources. They fail, rather than skip, when no program has been built.
 
 ## Repository layout
@@ -131,14 +135,14 @@ sources. They fail, rather than skip, when no program has been built.
 | `Frame` | the workbench frames: `ui-check` and `ui-raw` requests answered as closed JSON results around the unchanged text report |
 | `Foundation.View.Text.V1.Model` | the text view contract |
 | `Production.Core`, `Production.BrowserSystem` | system model types and manifest validation |
-| `System` | the prism-code system model and its GitHub Pages target |
+| `System` | the dataflow-policy system model and its GitHub Pages target |
 | `Architecture` | the ISO/IEC/IEEE 42010 architecture description, checked against `System` |
 | `Design` | the OPM (ISO/PAS 19450) process model and the UML component, sequence and state machine views of the architecture, each element checked against the architecture and system models |
 | `Foundation.Arch` | the architecture and design-view vocabulary (copy of the PrismPM stdlib module at PrismPM#234) |
 
 ## Open in a codespace
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/UOR-Foundation/prism-code?quickstart=1&devcontainer_path=.devcontainer%2Fcodespaces%2Fdevcontainer.json)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/UOR-Foundation/dataflow-policy?quickstart=1&devcontainer_path=.devcontainer%2Fcodespaces%2Fdevcontainer.json)
 
 The badge opens a codespace on the digest-pinned SDK image with Docker, Lean and
 Rust ready; nothing is installed on your machine. Its configuration is
@@ -155,7 +159,7 @@ use the [template's try page](https://uor-foundation.github.io/template/).
 
 ## Toolchain
 
-prism-code is built with LexLean and the PrismPM SDK, used only through the
+dataflow-policy is built with LexLean and the PrismPM SDK, used only through the
 digest-pinned SDK image in `prismpm.lock`. That lock and `template.lock` are
 written when the repository binds a public PrismPM SDK release; until then
 `just vv` and the bootstrap workflow cannot pass. See

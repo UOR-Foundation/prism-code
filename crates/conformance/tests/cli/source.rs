@@ -14,7 +14,7 @@ fn markers() -> Vec<String> {
         ["status", "accepted"].join(" "),
         ["status", "rejected"].join(" "),
         ["status", "error"].join(" "),
-        ["prism-code", "1"].join("/"),
+        ["dataflow-policy", "1"].join("/"),
         ["split", "exact"].join("_"),
         format!("fn {}(", "dispatch"),
     ]
