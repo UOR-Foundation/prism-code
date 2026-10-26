@@ -158,7 +158,9 @@ fn the_page_and_the_command_line_agree_on_every_vector_pa_01() {
     );
     evidence::attestation(root(), &fixture.program).require(cli.vectors.len(), oversized(cli));
     let (coverage, mismatches) = compare(cli, &|request| {
-        run(&fixture.program, &check_arguments(cli), request)
+        let mut output = run(&fixture.program, &check_arguments(cli), request);
+        output.stdout.push(b'\n');
+        output
     });
     assert!(
         mismatches.is_empty(),
