@@ -2,12 +2,18 @@
 # (https://uor-foundation.github.io/prism-code/). Adapted from the PrismPM
 # starter action/starter/publish-pages.yml (PrismPM#205). Main pushes and
 # release tags only; never pull requests. One job on one runner.
+#
+# No `fetch` step: building the browser view needs only the SDK image, as in
+# the bootstrap gate, while `fetch --locked` downloads every standards
+# authority, including OSV snapshot generations the publisher has since
+# deleted (404), so it fails without affecting what is published.
 name: pages
 
 on:
   push:
     branches: [main]
     tags: ['v*']
+  workflow_dispatch:
 
 permissions: {}
 
@@ -48,11 +54,6 @@ jobs:
           printf 'sdk-image=%s\n' "$image" >> "$GITHUB_OUTPUT"
           # The tagged destination names the local release only; nothing is pushed.
           printf 'reference=ghcr.io/%s:pages\n' "${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-      - name: Fetch the locked SDK inputs
-        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
-        with:
-          command: fetch
-          sdk-image: ${{ steps.lock.outputs.sdk-image }}
       - id: pages
         name: Build once, export the browser closure and check it against the system manifest
         uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
