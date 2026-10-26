@@ -54,20 +54,18 @@ jobs:
           printf 'sdk-image=%s\n' "$image" >> "$GITHUB_OUTPUT"
           # The tagged destination names the local release only; nothing is pushed.
           printf 'reference=ghcr.io/%s:pages\n' "${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-      - id: pages
-        name: Build once, export the browser closure and check it against the system manifest
-        uses: UOR-Foundation/PrismPM/action@35e9f01d5415ed4b0b64c152238f291546957ec4 # prismpm-action-input
-        with:
-          command: publish-pages
-          output: pages
-          reference: ${{ steps.lock.outputs.reference }}
-          sdk-image: ${{ steps.lock.outputs.sdk-image }}
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
-      - name: Upload the checked closure as the Pages artifact
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
-        with:
-          path: ${{ steps.pages.outputs.pages-path }}
-      - id: deployment
-        name: Deploy the uploaded closure without rebuilding
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+      - name: Diagnose the build inside the SDK image
+        shell: bash
+        env:
+          IMAGE: ${{ steps.lock.outputs.sdk-image }}
+          REF: ${{ steps.lock.outputs.reference }}
+        run: |
+          set -uo pipefail
+          for cmd in "check" "build --locked --tag $REF $GITHUB_WORKSPACE"; do
+            echo "== prismpm $cmd"
+            docker run --rm --user "$(id -u):$(id -g)" --env HOME=/tmp/prismpm-home --env PRISMPM_EPHEMERAL_HOME=1 \
+              --env BUILDX_CONFIG=/tmp/prismpm-buildx --tmpfs /tmp:rw,exec,nosuid,size=2g --cap-drop ALL \
+              --security-opt no-new-privileges --network none --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+              "$IMAGE" prismpm --project "$GITHUB_WORKSPACE" --json $cmd; echo "exit $?"
+          done
+          exit 1
