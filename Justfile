@@ -30,9 +30,16 @@ model-write:
 
 # The command-line tests drive the program `prismpm build` generates, so the
 # gate checks and builds the application through the locked SDK before `test`.
+#
+# `prismpm verify` then executes every acceptance vector in Core-Wasm and in the
+# portable browser view, runs the built program over the same vectors, checks the
+# system manifest's application model digest and the browser file closure against
+# the build manifest, and publishes the evidence under `.prism/verified/`. The
+# `parity` test reads that evidence instead of running the page a second time.
 build:
     prismpm check
     prismpm build
+    prismpm verify
 
 fmt:
     cargo fmt --all
