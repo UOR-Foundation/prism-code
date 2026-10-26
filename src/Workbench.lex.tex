@@ -10,7 +10,7 @@
 \importmodule{Guide}
 \importmodule{Interaction}
 \importmodule{Specification}
-\title{Prism-code workbench guidance}
+\title{Dataflow-policy workbench guidance}
 \begin{semanticmodule}
 structure{
   name: StatementForm,
@@ -176,10 +176,10 @@ definition{
   parameters: [fault : RequestFault],
   result: Recovery,
   body: (match fault
-    | RequestFault.EmptyRequest => (recovery (requestFaultCode fault) "The request is empty." "Enter the header prism-code/1 on the first line, then the project statements.")
+    | RequestFault.EmptyRequest => (recovery (requestFaultCode fault) "The request is empty." "Enter the header dataflow-policy/1 on the first line, then the project statements.")
     | RequestFault.OversizedRequest => (recovery (requestFaultCode fault) "The request is longer than 4096 bytes." "Shorten the script to at most 4096 bytes.")
     | RequestFault.InvalidEncoding => (recovery (requestFaultCode fault) "The request is not valid UTF-8 text." "Paste the script as plain UTF-8 text.")
-    | RequestFault.MissingHeader => (recovery (requestFaultCode fault) "The first line is not the header prism-code/1." "Start the script with the line prism-code/1."))
+    | RequestFault.MissingHeader => (recovery (requestFaultCode fault) "The first line is not the header dataflow-policy/1." "Start the script with the line dataflow-policy/1."))
 }
 
 definition{

@@ -25,13 +25,13 @@ spec = "template/1"
 id = "CL-01"
 level = "build"
 suite = "cli"
-statement = "prism-code check FILE, check - and check with the request on standard input print the same bytes for every acceptance vector within the request maximum, and those bytes equal the vector's modeled response."
+statement = "dataflow-policy check FILE, check - and check with the request on standard input print the same bytes for every acceptance vector within the request maximum, and those bytes equal the vector's modeled response."
 
 [[id]]
 id = "CL-02"
 level = "build"
 suite = "cli"
-statement = "The exit status of prism-code check is the model's code for the outcome the report begins with: 0 for status accepted, 1 for status rejected and 2 for status error."
+statement = "The exit status of dataflow-policy check is the model's code for the outcome the report begins with: 0 for status accepted, 1 for status rejected and 2 for status error."
 
 [[id]]
 id = "CL-03"
@@ -55,7 +55,7 @@ statement = "--help prints the model's purpose, statement reference, report form
 id = "CL-06"
 level = "build"
 suite = "cli"
-statement = "--version prints the model's cargoName and cargoVersion on one line, prism-code 0.1.0, and exits 0."
+statement = "--version prints the model's cargoName and cargoVersion on one line, dataflow-policy 0.1.0, and exits 0."
 
 [[id]]
 id = "CL-07"

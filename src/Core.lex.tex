@@ -397,7 +397,7 @@ definition{
   name: canonicalText,
   parameters: [project : Project],
   result: String,
-  body: (prim join (cons "\nprism-code/1" (cons (policyText (project var{name: project} policies)) (cons (nodesText (project (sortNodes (project var{name: project} nodes)) items)) (cons (namesText (project (sortNames (project var{name: project} pii)) items)) (cons (edgesText (project (sortEdges (project var{name: project} edges)) items)) (nil String)))))) "" : String),
+  body: (prim join (cons "\ndataflow-policy/1" (cons (policyText (project var{name: project} policies)) (cons (nodesText (project (sortNodes (project var{name: project} nodes)) items)) (cons (namesText (project (sortNames (project var{name: project} pii)) items)) (cons (edgesText (project (sortEdges (project var{name: project} edges)) items)) (nil String)))))) "" : String),
   axioms: [Classical.choice, Quot.sound, propext]
 }
 

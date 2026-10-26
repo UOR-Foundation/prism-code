@@ -22,12 +22,12 @@ model does not sanction.
 
 | ID | Level | Statement |
 | --- | --- | --- |
-| `CL-01` | `build` | prism-code check FILE, check - and check with the request on standard input print the same bytes for every acceptance vector within the request maximum, and those bytes equal the vector's modeled response. |
-| `CL-02` | `build` | The exit status of prism-code check is the model's code for the outcome the report begins with: 0 for status accepted, 1 for status rejected and 2 for status error. |
+| `CL-01` | `build` | dataflow-policy check FILE, check - and check with the request on standard input print the same bytes for every acceptance vector within the request maximum, and those bytes equal the vector's modeled response. |
+| `CL-02` | `build` | The exit status of dataflow-policy check is the model's code for the outcome the report begins with: 0 for status accepted, 1 for status rejected and 2 for status error. |
 | `CL-03` | `build` | A request longer than the request maximum is refused before dispatch: standard output stays empty, standard error names InputLimit and the exit status is the code of the error outcome. |
 | `CL-04` | `build` | No Rust source in the repository implements dispatch, request parsing or report formatting; the command line is generated from the model. |
 | `CL-05` | `build` | --help prints the model's purpose, statement reference, report format, status texts, recovery text for every error and finding code, example names and exit-code table, and exits 0. |
-| `CL-06` | `build` | --version prints the model's cargoName and cargoVersion on one line, prism-code 0.1.0, and exits 0. |
+| `CL-06` | `build` | --version prints the model's cargoName and cargoVersion on one line, dataflow-policy 0.1.0, and exits 0. |
 | `CL-07` | `build` | examples lists the model's example names, examples NAME prints that script unchanged, and piping each script to check gives the report and exit status of the acceptance vector it is drawn from. |
 | `CL-08` | `build` | Every guidance string, example and code explanation in the workbench model also appears in the --help or examples output. |
 | `CL-09` | `build` | An unknown flag is refused with the UnknownFlag diagnostic on standard error, the model's usage code and empty standard output. |

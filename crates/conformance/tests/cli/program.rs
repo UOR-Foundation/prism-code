@@ -13,7 +13,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::SystemTime;
 
 /// Environment variable that names the program, overriding the build search.
-pub const PROGRAM_VARIABLE: &str = "PRISM_CODE_CLI";
+pub const PROGRAM_VARIABLE: &str = "DATAFLOW_POLICY_CLI";
 
 fn host_target() -> &'static str {
     match std::env::consts::ARCH {
@@ -23,7 +23,7 @@ fn host_target() -> &'static str {
     }
 }
 
-/// The generated program named `binary`: `PRISM_CODE_CLI` when set, otherwise
+/// The generated program named `binary`: `DATAFLOW_POLICY_CLI` when set, otherwise
 /// the newest `cli/bin/<host target>/<binary>` under `.prism/build/`.
 pub fn locate(root: &Path, binary: &str) -> PathBuf {
     if let Some(path) = std::env::var_os(PROGRAM_VARIABLE) {
@@ -125,7 +125,7 @@ impl Scratch {
     pub fn new() -> Self {
         static NEXT: AtomicUsize = AtomicUsize::new(0);
         let dir = std::env::temp_dir().join(format!(
-            "prism-code-cli-{}-{}",
+            "dataflow-policy-cli-{}-{}",
             std::process::id(),
             NEXT.fetch_add(1, Ordering::Relaxed)
         ));

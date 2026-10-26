@@ -8,8 +8,8 @@ edition = "2021"
 # Raise this when something here needs a newer compiler; nothing does yet.
 rust-version = "1.89"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/UOR-Foundation/prism-code"
-homepage = "https://uor-foundation.github.io/prism-code/"
+repository = "https://github.com/UOR-Foundation/dataflow-policy"
+homepage = "https://uor-foundation.github.io/dataflow-policy/"
 authors = ["UOR Foundation"]
 keywords = []
 categories = []

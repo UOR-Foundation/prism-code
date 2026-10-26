@@ -88,7 +88,7 @@ fn version_prints_the_modeled_name_and_version_cl_06() {
     // The value #18 asks of the v0.1.0 milestone.
     assert_eq!(
         (cli.cargo_name.as_str(), cli.cargo_version.as_str()),
-        ("prism-code", "0.1.0")
+        ("dataflow-policy", "0.1.0")
     );
 }
 

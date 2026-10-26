@@ -5,7 +5,7 @@
 //! program and hold it to what the model declares: the acceptance vectors, the
 //! exit-code map, the help sections, the examples and the typed diagnostics of
 //! every usage and input or output failure (R5). Run `prismpm build` first, or
-//! set `PRISM_CODE_CLI` to the program.
+//! set `DATAFLOW_POLICY_CLI` to the program.
 
 mod check;
 mod evidence;
