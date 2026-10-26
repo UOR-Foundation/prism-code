@@ -64,32 +64,22 @@ definition{
 
 definition{
   name: escapeFrom,
-  parameters: [value : Bytes, start : Nat, offset : Nat, remaining : Nat, chunks : (List String)],
-  result: (List String),
+  parameters: [value : Bytes, start : Nat, offset : Nat, remaining : Nat],
+  result: String,
   body: (match remaining
-    | Nat.zero => (cons (chunk value start offset) chunks)
+    | Nat.zero => (chunk value start offset)
     | Nat.succ rest => (match (prim index value offset : (Option UInt8))
-      | Option.none => (cons (chunk value start offset) chunks)
-      | Option.some octet => (if (prim equal (escapeOctet octet) "" : Bool) then (escapeFrom value start (offset + 1) rest chunks) else (escapeFrom value (offset + 1) (offset + 1) rest (cons (escapeOctet octet) (cons (chunk value start offset) chunks)))))),
+      | Option.none => (chunk value start offset)
+      | Option.some octet => (if (prim equal (escapeOctet octet) "" : Bool) then (escapeFrom value start (offset + 1) rest) else (prim join (cons (chunk value start offset) (cons (escapeOctet octet) (cons (escapeFrom value (offset + 1) (offset + 1) rest) (nil String)))) "" : String)))),
   axioms: [Classical.choice, Quot.sound, propext],
   recursive_argument: remaining
-}
-
-definition{
-  name: reverseOnto,
-  parameters: [items : (List String), done : (List String)],
-  result: (List String),
-  body: (match items
-    | List.nil => done
-    | List.cons head rest => (reverseOnto rest (cons head done))),
-  recursive_argument: items
 }
 
 definition{
   name: escapeText,
   parameters: [text : String],
   result: String,
-  body: (prim join (reverseOnto (escapeFrom (prim utf8_encode text : Bytes) 0 0 (prim length (prim utf8_encode text : Bytes) : Nat) (nil String)) (nil String)) "" : String),
+  body: (escapeFrom (prim utf8_encode text : Bytes) 0 0 (prim length (prim utf8_encode text : Bytes) : Nat)),
   axioms: [Classical.choice, Quot.sound, propext]
 }
 
@@ -104,10 +94,12 @@ definition{
 definition{
   name: quoteAll,
   parameters: [items : (List String)],
-  result: (List String),
+  result: String,
   body: (match items
-    | List.nil => (nil String)
-    | List.cons head rest => (cons (jsonString head) (quoteAll rest))),
+    | List.nil => ""
+    | List.cons head rest => (match rest
+      | List.nil => (jsonString head)
+      | List.cons next more => (prim join (cons (jsonString head) (cons "," (cons (quoteAll rest) (nil String)))) "" : String))),
   axioms: [Classical.choice, Quot.sound, propext],
   recursive_argument: items
 }
@@ -116,7 +108,7 @@ definition{
   name: jsonArray,
   parameters: [items : (List String)],
   result: String,
-  body: (prim join (cons "[" (cons (prim join (quoteAll items) "," : String) (cons "]" (nil String)))) "" : String),
+  body: (prim join (cons "[" (cons (quoteAll items) (cons "]" (nil String)))) "" : String),
   axioms: [Classical.choice, Quot.sound, propext]
 }
 

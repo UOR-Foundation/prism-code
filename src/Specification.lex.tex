@@ -11,22 +11,29 @@
 \title{Prism-code request dispatch}
 \begin{semanticmodule}
 definition{
+  name: respondText,
+  parameters: [body : String],
+  result: Bytes,
+  body: (if (16384 <? (prim length (prim utf8_encode body : Bytes) : Nat)) then (prim utf8_encode "status error\nresponse too-large" : Bytes) else (prim utf8_encode body : Bytes))
+}
+
+definition{
   name: respond,
   parameters: [lines : (List String)],
   result: Bytes,
-  body: (if (16384 <? (prim length (prim utf8_encode (prim join lines "\n" : String) : Bytes) : Nat)) then (prim utf8_encode "status error\nresponse too-large" : Bytes) else (prim utf8_encode (prim join lines "\n" : String) : Bytes)),
+  body: (respondText (prim join lines "\n" : String)),
   axioms: [propext]
 }
 
 definition{
   name: dispatchText,
   parameters: [text : String],
-  result: (List String),
+  result: String,
   body: (match (prim split_exact text "\n" (4097 : UInt32) : (Option (List String)))
-    | Option.none => (cons "status error" (cons "request too-many-lines" (nil String)))
+    | Option.none => "status error\nrequest too-many-lines"
     | Option.some lines => (match lines
-      | List.nil => (cons "status error" (cons "line 1 missing-header" (nil String)))
-      | List.cons header body => (if (prim equal header "prism-code/1" : Bool) then (Engine::outcomeLines (Engine::conclude (Engine::runLines body (Core::emptyProject) (1 : UInt32)))) else (cons "status error" (cons "line 1 missing-header" (nil String)))))),
+      | List.nil => "status error\nline 1 missing-header"
+      | List.cons header body => (if (prim equal header "prism-code/1" : Bool) then (Engine::outcomeText (Engine::conclude (Engine::runLines body (Core::emptyProject) (1 : UInt32)))) else "status error\nline 1 missing-header"))),
   axioms: [Classical.choice, Quot.sound, propext]
 }
 
@@ -36,7 +43,7 @@ definition{
   result: Bytes,
   body: (if ((prim length request : Nat) =? 0) then (respond (cons "status error" (cons "request empty" (nil String)))) else (if (4096 <? (prim length request : Nat)) then (respond (cons "status error" (cons "request too-large" (nil String)))) else (match (prim utf8_decode request : (Option String))
     | Option.none => (respond (cons "status error" (cons "request invalid-utf8" (nil String))))
-    | Option.some text => (respond (dispatchText text))))),
+    | Option.some text => (respondText (dispatchText text))))),
   axioms: [Classical.choice, Quot.sound, propext]
 }
 
