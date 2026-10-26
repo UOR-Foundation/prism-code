@@ -26,9 +26,6 @@ jobs:
     name: build, check and deploy the browser application
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       contents: read
       id-token: write
