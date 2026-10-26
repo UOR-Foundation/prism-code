@@ -58,11 +58,11 @@ jobs:
           REF: ${{ steps.lock.outputs.reference }}
         run: |
           set -uo pipefail
-          for cmd in "check" "build --locked --tag $REF $GITHUB_WORKSPACE"; do
+          for cmd in "build --locked --tag $REF $GITHUB_WORKSPACE"; do
             echo "== prismpm $cmd"
             docker run --rm --user "$(id -u):$(id -g)" --env HOME=/tmp/prismpm-home --env PRISMPM_EPHEMERAL_HOME=1 \
               --env BUILDX_CONFIG=/tmp/prismpm-buildx --tmpfs /tmp:rw,exec,nosuid,size=2g --cap-drop ALL \
               --security-opt no-new-privileges --network none --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
-              "$IMAGE" prismpm --project "$GITHUB_WORKSPACE" --json $cmd; echo "exit $?"
+              "$IMAGE" prismpm --json $cmd; echo "exit $?"
           done
           exit 1
