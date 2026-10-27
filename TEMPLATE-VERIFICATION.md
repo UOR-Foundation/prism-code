@@ -27,6 +27,7 @@ added without the other two.
 | honesty meta-gate | an ID with no test | armed by the empty register |
 | `audit-bootstrap` | a floating/copied action, mutable SDK tag, changed universal file, narrowed boundary, shallow/credential-retaining checkout, copied project renderer, omitted standards lock, acceptance bypass, deploy-job signing privilege, or incomplete release lifecycle | all rejected |
 | capability suites (`SC`, `AD`, `CP`, `BD`) | a changed error code, a dropped sort of nodes, findings out of order, an encrypt node that no longer stops PII, a request limit of 4097 and a changed `invalid-utf8` code, planted one at a time in a stand-in for the generated program (the model builds only in the SDK image) | `SC-07`, `SC-09`, `AD-03`, `AD-10`, `CP-01` and `CP-03`, `CP-02`, `BD-02` and `BD-03` failed, and passed again when restored |
+| quality budgets (`QB-01`) | a Core-Wasm guest one byte over `measureGuestSize` (262145 bytes against 262144), compared by the same `compare` check the measured guest goes through (`QB-01` on the bootstrap run of PR #60: guest 52817 bytes against 262144) | refused, while the threshold itself is accepted: `a_guest_over_its_budget_is_refused_qb_01` fails if the comparison accepts the larger guest |
 
 `audit-deferral` reads every crate and `xtask`, including itself. Its token
 construction therefore cannot exempt the very gate in which a deferral could

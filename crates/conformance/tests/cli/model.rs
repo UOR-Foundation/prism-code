@@ -382,6 +382,102 @@ pub fn load(root: &Path) -> Cli {
     cli(root).unwrap_or_else(|error| panic!("reading the modeled command line: {error}"))
 }
 
+/// One performance-efficiency budget of the quality model.
+#[derive(Debug, Clone)]
+pub struct Budget {
+    /// The measure index.
+    pub measure: u64,
+    /// The requirement's name.
+    pub name: String,
+    /// The threshold the measure is held to.
+    pub threshold: u64,
+    /// The unit of the threshold, as the model names it.
+    pub unit: String,
+    /// Where the threshold comes from, as the model names it.
+    pub basis: String,
+}
+
+/// The budgets the build is held to.
+#[derive(Debug, Clone)]
+pub struct Budgets {
+    /// Core-Wasm guest size.
+    pub guest: Budget,
+    /// Browser closure size.
+    pub closure: Budget,
+    /// Command-line check latency on the largest request.
+    pub cli_latency: Budget,
+}
+
+/// The measure called `definition`: its index, requirement and threshold.
+fn measure(quality: &str, name: &str) -> Result<(u64, u64, u64), String> {
+    let body = definition(quality, name)?;
+    let mut at = field(body, "QualityMeasure {index := ")?;
+    let index = at.number()?;
+    at.expect(", requirementIndex := ")?;
+    let requirement = at.number()?;
+    at.expect(", threshold := ")?;
+    Ok((index, requirement, at.number()?))
+}
+
+fn budget(quality: &str, name: &str) -> Result<Budget, String> {
+    let (index, requirement, threshold) = measure(quality, name)?;
+    let names = definition(quality, "requirementNames")?;
+    let mut named = field(names, &format!("Named {{index := {requirement}, name := "))?;
+    let requirement_name = named.string()?;
+    let budgets = definition(quality, "budgets")?;
+    let mut row = field(
+        budgets,
+        &format!("Budget {{measure := {index}, bound := (ctor Bound."),
+    )?;
+    let bound = row.identifier();
+    if bound != "AtMost" {
+        return Err(format!(
+            "budget {index} is bounded {bound}, expected AtMost"
+        ));
+    }
+    row.expect("), unit := (ctor BudgetUnit.")?;
+    let unit = row.identifier();
+    row.expect("), basis := (ctor Basis.")?;
+    let basis = row.identifier();
+    Ok(Budget {
+        measure: index,
+        name: requirement_name,
+        threshold,
+        unit,
+        basis,
+    })
+}
+
+fn budgets(root: &Path) -> Result<Budgets, String> {
+    let quality = read(&root.join("src/Quality.lex.tex"))?;
+    let guest = budget(&quality, "measureGuestSize")?;
+    let closure = budget(&quality, "measureClosureSize")?;
+    let cli_latency = budget(&quality, "measureCliLatency")?;
+    for (budget, unit) in [
+        (&guest, "Bytes"),
+        (&closure, "Bytes"),
+        (&cli_latency, "Milliseconds"),
+    ] {
+        if budget.unit != unit {
+            return Err(format!(
+                "{} is in {}, expected {unit}",
+                budget.name, budget.unit
+            ));
+        }
+    }
+    Ok(Budgets {
+        guest,
+        closure,
+        cli_latency,
+    })
+}
+
+/// Read the quality budgets from `root`, panicking with the reason when the
+/// sources are not in the shape this reader understands.
+pub fn load_budgets(root: &Path) -> Budgets {
+    budgets(root).unwrap_or_else(|error| panic!("reading the quality budgets: {error}"))
+}
+
 /// The constructor a match arm names: the last path segment of its first token.
 fn constructor(arm: &str) -> Option<&str> {
     let token = arm.trim().strip_prefix('|')?.split_whitespace().next()?;

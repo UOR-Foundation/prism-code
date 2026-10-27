@@ -45,6 +45,14 @@ model does not sanction.
 | `BD-06` | `build` | A response cannot exceed the 16384-byte limit of response too-large from a request within the 4096-byte maximum, so no acceptance vector produces it: the densest request found, PII from one input to the most outputs over a memory limit of zero, gives a response under the limit. |
 | `BD-07` | `build` | A request of exactly 4096 bytes is accepted, and so is one byte fewer (acceptance vector 12). |
 
+## budget
+
+| ID | Level | Statement |
+| --- | --- | --- |
+| `QB-01` | `build` | The Core-Wasm guest prismpm build publishes is no larger than the byte threshold of measureGuestSize in the quality model, and a guest one byte over that threshold is refused; the measured size is reported beside the budget and is not itself a claim. |
+| `QB-02` | `build` | The six-file browser closure prismpm build publishes is no larger in total than the byte threshold of measureClosureSize in the quality model; the measured size is reported beside the budget and is not itself a claim. |
+| `QB-03` | `build` | The median of 11 runs of dataflow-policy check on acceptance vector 12, the 4096-byte request, process start included and each run giving the modeled response, is within the millisecond threshold of measureCliLatency in the quality model; the measured time is reported beside the budget and is not itself a claim. |
+
 ## cli
 
 | ID | Level | Statement |
