@@ -81,26 +81,44 @@ fn guest(build: &Path) -> PathBuf {
     found.remove(0)
 }
 
-fn report(budget: &Budget, measured: u64) {
-    // Written past the test harness's capture, so the build log of every
-    // `just vv` carries each budget beside its measured value.
-    let line = format!(
-        "budget {} ({}): measured {measured} {}, budget at most {} {} ({})\n",
-        budget.measure, budget.name, budget.unit, budget.threshold, budget.unit, budget.basis
+/// Print `line` past the test harness's capture, so the build log of every
+/// `just vv` carries each budget beside its measured value.
+fn report(line: &str) {
+    let _ = std::io::stderr().write_all(
+        format!(
+            "{line}
+"
+        )
+        .as_bytes(),
     );
-    let _ = std::io::stderr().write_all(line.as_bytes());
 }
 
-fn within(budget: &Budget, measured: u64) {
-    report(budget, measured);
-    assert!(
-        measured <= budget.threshold,
-        "{} is {measured} {}, over its budget of {} {}",
-        budget.name,
-        budget.unit,
-        budget.threshold,
-        budget.unit
-    );
+/// Whether `measured` is within `budget`, without reporting it.
+fn compare(budget: &Budget, measured: u64) -> Result<(), String> {
+    if measured <= budget.threshold {
+        Ok(())
+    } else {
+        Err(format!(
+            "{} is {measured} {}, over its budget of {} {}",
+            budget.name, budget.unit, budget.threshold, budget.unit
+        ))
+    }
+}
+
+/// Report a measured value of the build beside its budget, and hold it to it.
+/// `shown` is the value as reported, which may be finer than the unit.
+fn within(budget: &Budget, measured: u64, shown: &str) {
+    report(&format!(
+        "budget {} ({}): measured {shown}, budget at most {} {} ({})",
+        budget.measure, budget.name, budget.threshold, budget.unit, budget.basis
+    ));
+    if let Err(over) = compare(budget, measured) {
+        panic!("{over}");
+    }
+}
+
+fn bytes(budget: &Budget, measured: u64) {
+    within(budget, measured, &format!("{measured} {}", budget.unit));
 }
 
 /// `QB-01`: the Core-Wasm guest is within its byte budget.
@@ -108,7 +126,7 @@ fn within(budget: &Budget, measured: u64) {
 fn the_guest_is_within_its_size_budget_qb_01() {
     let budgets = model::load_budgets(root());
     let build = build_of(&fixture().program);
-    within(&budgets.guest, size(&guest(&build)));
+    bytes(&budgets.guest, size(&guest(&build)));
 }
 
 /// `QB-01`, planted: a guest one byte over the budget is refused.
@@ -116,8 +134,11 @@ fn the_guest_is_within_its_size_budget_qb_01() {
 fn a_guest_over_its_budget_is_refused_qb_01() {
     let budgets = model::load_budgets(root());
     let over = budgets.guest.threshold + 1;
-    let refused = std::panic::catch_unwind(|| within(&budgets.guest, over));
-    assert!(refused.is_err(), "a {over}-byte guest passed its budget");
+    assert!(
+        compare(&budgets.guest, over).is_err(),
+        "a {over}-byte guest passed its budget"
+    );
+    assert!(compare(&budgets.guest, budgets.guest.threshold).is_ok());
 }
 
 /// `QB-02`: the browser closure is within its byte budget.
@@ -131,7 +152,7 @@ fn the_browser_closure_is_within_its_size_budget_qb_02() {
         6,
         "the browser closure is six files: {files:?}"
     );
-    within(&budgets.closure, files.iter().map(|file| size(file)).sum());
+    bytes(&budgets.closure, files.iter().map(|file| size(file)).sum());
 }
 
 /// The largest request the model declares: vector 12, the 4096-byte script.
@@ -175,8 +196,13 @@ fn the_command_line_checks_the_largest_request_within_its_time_budget_qb_03() {
     let budgets = model::load_budgets(root());
     let vector = largest(&fixture.cli);
     let measured = median(&fixture.program, &fixture.cli, vector, 11);
+    // Compared in whole milliseconds rounded up, so a fraction over the
+    // threshold counts as over; reported in microseconds.
+    let micros = measured.as_micros();
+    let millis = u64::try_from(micros.div_ceil(1000)).expect("milliseconds fit in u64");
     within(
         &budgets.cli_latency,
-        u64::try_from(measured.as_millis()).expect("milliseconds fit in u64"),
+        millis,
+        &format!("{}.{:03} Milliseconds", micros / 1000, micros % 1000),
     );
 }
