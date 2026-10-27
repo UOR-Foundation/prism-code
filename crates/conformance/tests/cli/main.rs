@@ -1,5 +1,6 @@
-//! The generated command line (`CL-01` through `CL-18`, `PA-01`) and its
-//! script, admission, compliance and boundary capabilities (`SC`, `AD`, `CP`, `BD`).
+//! The generated command line (`CL-01` through `CL-18`, `PA-01`), its
+//! script, admission, compliance and boundary capabilities (`SC`, `AD`, `CP`, `BD`)
+//! and the quality budgets of what the build ships (`QB`).
 //!
 //! The program is generated from the application model by `prismpm build`;
 //! nothing in this repository implements it (R1). These tests drive the built
@@ -10,6 +11,7 @@
 
 mod admission;
 mod boundary;
+mod budget;
 mod check;
 mod compliance;
 mod evidence;

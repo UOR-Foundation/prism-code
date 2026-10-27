@@ -329,3 +329,21 @@ id = "BD-07"
 level = "build"
 suite = "boundary"
 statement = "A request of exactly 4096 bytes is accepted, and so is one byte fewer (acceptance vector 12)."
+
+[[id]]
+id = "QB-01"
+level = "build"
+suite = "budget"
+statement = "The Core-Wasm guest prismpm build publishes is no larger than the byte threshold of measureGuestSize in the quality model, and a guest one byte over that threshold is refused; the measured size is reported beside the budget and is not itself a claim."
+
+[[id]]
+id = "QB-02"
+level = "build"
+suite = "budget"
+statement = "The six-file browser closure prismpm build publishes is no larger in total than the byte threshold of measureClosureSize in the quality model; the measured size is reported beside the budget and is not itself a claim."
+
+[[id]]
+id = "QB-03"
+level = "build"
+suite = "budget"
+statement = "The median of 11 runs of dataflow-policy check on acceptance vector 12, the 4096-byte request, process start included and each run giving the modeled response, is within the millisecond threshold of measureCliLatency in the quality model; the measured time is reported beside the budget and is not itself a claim."
