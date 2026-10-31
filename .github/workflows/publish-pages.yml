@@ -1,11 +1,13 @@
-# Publishes the verified browser view to GitHub Pages
-# (https://uor-foundation.github.io/prism-code/). Main pushes and release tags
-# only; never pull requests. One job on one runner.
+# Publishes the browser view to GitHub Pages
+# (https://uor-foundation.github.io/prism-code/) once the bootstrap gate has
+# passed on a main push. One job on one runner.
 #
-# The application is checked, built and verified through the locked SDK exactly
-# as the bootstrap gate does (`prismpm check`, `build`, `verify`), and the
-# verified `view/browser` closure is what is uploaded. `prismpm verify` holds
-# that closure to the build manifest and every acceptance vector before upload.
+# The gate already ran `prismpm verify` (every acceptance vector, the browser
+# closure against the build manifest) on this exact commit on both
+# architectures, so this job only checks and builds the same commit through the
+# same locked SDK and uploads its `view/browser` closure. Tags add nothing: a
+# tag points at a main commit that is already deployed.
+#
 # The SDK action's `publish-pages` command is not used: it builds `--locked`,
 # which needs `fetch --locked` to fill the authority cache, and that fetch fails
 # on standards.lock OSV snapshot URLs the publisher has deleted
@@ -13,9 +15,10 @@
 name: pages
 
 on:
-  push:
+  workflow_run:
+    workflows: [bootstrap]
+    types: [completed]
     branches: [main]
-    tags: ['v*']
   workflow_dispatch:
 
 permissions: {}
@@ -27,8 +30,9 @@ concurrency:
 jobs:
   publish:
     name: build, check and deploy the browser application
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 30
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -40,10 +44,11 @@ jobs:
       - name: Check out the exact event revision without credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - id: pages
-        name: Check, build and verify through the locked SDK, then stage the browser view
+        name: Check and build through the locked SDK, then stage the browser view
         shell: bash
         run: |
           set -euo pipefail
@@ -61,7 +66,7 @@ jobs:
             --workdir "$PWD" \
             --env HOME=/tmp/prismpm-home \
             --env PRISMPM_EPHEMERAL_HOME=1 \
-            "$image" bash -c 'set -euo pipefail; prismpm check; prismpm build; prismpm verify'
+            "$image" bash -c 'set -euo pipefail; prismpm check; prismpm build'
           browser=$(ls -td .prism/build/*/view/browser | head -n 1)
           test -f "$browser/index.html"
           mkdir -p _site
