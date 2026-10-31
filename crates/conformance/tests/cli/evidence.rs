@@ -24,7 +24,10 @@ pub struct Attestation {
 
 fn sha256_hex(path: &Path) -> String {
     let bytes = std::fs::read(path).unwrap_or_else(|error| panic!("{}: {error}", path.display()));
-    format!("{:x}", Sha256::digest(&bytes))
+    Sha256::digest(&bytes)
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
 }
 
 fn read_json(path: &Path) -> Value {
