@@ -22,7 +22,7 @@
       ],
       "package-ecosystem": "github-actions",
       "schedule": {
-        "interval": "monthly"
+        "interval": "weekly"
       }
     },
     {
@@ -39,7 +39,7 @@
       },
       "package-ecosystem": "cargo",
       "schedule": {
-        "interval": "monthly"
+        "interval": "weekly"
       }
     }
   ],
