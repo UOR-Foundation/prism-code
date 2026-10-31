@@ -495,6 +495,11 @@ pub fn audit(root: &Path) -> Result<(), Fail> {
     {
         return Err("the devcontainer is not a direct use of the locked SDK image".into());
     }
+    let codespaces: serde_json::Value =
+        serde_json::from_str(&read(root, ".devcontainer/codespaces/devcontainer.json")?)?;
+    if codespaces["image"] != image {
+        return Err("the Codespaces devcontainer does not use the locked SDK image".into());
+    }
 
     let bootstrap = read(root, ".github/workflows/bootstrap.yml")?;
     if bootstrap.contains("pull_request_target")

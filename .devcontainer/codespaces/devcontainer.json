@@ -1,6 +1,6 @@
 {
   "name": "UOR PrismPM SDK (Codespaces)",
-  "image": "ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:2031b783964961ac16ac923edb59f915d4d9f32fdcf734d4f416124e137d6691",
+  "image": "ghcr.io/uor-foundation/prismpm-sdk-candidate@sha256:cd3b47d7a370c4a26b8285f5e9c3bb15e639973c55505c3809ddbe55352fea58",
   "containerUser": "root",
   "remoteUser": "vscode",
   "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
