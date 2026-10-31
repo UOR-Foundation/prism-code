@@ -88,7 +88,88 @@ pub fn attestation(root: &Path, program: &Path) -> Attestation {
     }
 }
 
+/// The SDK's summary of the browser's dispatch-to-render time for one
+/// acceptance vector, over its repetitions.
+#[derive(Debug, PartialEq, Eq)]
+pub struct BrowserTiming {
+    /// The median over the repetitions, in whole microseconds.
+    pub median_microseconds: u64,
+    /// The slowest repetition, in whole microseconds.
+    pub maximum_microseconds: u64,
+    /// How many times the vector was dispatched.
+    pub repetitions: u64,
+    /// The browser engine that was timed.
+    pub engine: String,
+    /// The version of that engine.
+    pub engine_version: String,
+}
+
 impl Attestation {
+    /// The acceptance vectors `prismpm verify` timed in the browser, in
+    /// order. The page times only the vectors it dispatches through its form;
+    /// the SDK checks the rest by direct invocation and does not time them.
+    pub fn browser_timed(&self) -> Vec<usize> {
+        let name = self.path.display();
+        let mut indexes: Vec<usize> = self.document["browser_timing"]
+            .as_array()
+            .unwrap_or_else(|| panic!("{name}: no browser_timing; the SDK recorded none"))
+            .iter()
+            .map(|row| {
+                row["vector_index"]
+                    .as_u64()
+                    .and_then(|index| usize::try_from(index).ok())
+                    .unwrap_or_else(|| {
+                        panic!("{name}: browser_timing row without a vector_index: {row}")
+                    })
+            })
+            .collect();
+        indexes.sort_unstable();
+        indexes
+    }
+
+    /// The browser timing `prismpm verify` recorded for acceptance vector
+    /// `index`. A record without it is a failure: the budget it serves would
+    /// otherwise be held to nothing.
+    pub fn browser_timing(&self, index: usize) -> BrowserTiming {
+        let name = self.path.display();
+        let rows = self.document["browser_timing"]
+            .as_array()
+            .unwrap_or_else(|| panic!("{name}: no browser_timing; the SDK recorded none"));
+        let mut matching = rows
+            .iter()
+            .filter(|row| row["vector_index"].as_u64() == u64::try_from(index).ok());
+        let row = matching
+            .next()
+            .unwrap_or_else(|| panic!("{name}: browser_timing has no row for vector {index}"));
+        assert!(
+            matching.next().is_none(),
+            "{name}: browser_timing has two rows for vector {index}"
+        );
+        let number = |key: &str| {
+            row[key]
+                .as_u64()
+                .unwrap_or_else(|| panic!("{name}: browser_timing {key} is not an integer: {row}"))
+        };
+        let text = |key: &str| {
+            row[key]
+                .as_str()
+                .unwrap_or_else(|| panic!("{name}: browser_timing {key} is not text: {row}"))
+                .to_owned()
+        };
+        let timing = BrowserTiming {
+            median_microseconds: number("median_microseconds"),
+            maximum_microseconds: number("maximum_microseconds"),
+            repetitions: number("repetitions"),
+            engine: text("engine"),
+            engine_version: text("engine_version"),
+        };
+        assert!(
+            timing.repetitions > 0 && timing.median_microseconds <= timing.maximum_microseconds,
+            "{name}: browser_timing for vector {index} is inconsistent: {row}"
+        );
+        timing
+    }
+
     /// Require that every run the page and command-line comparison relies on
     /// passed, and that the SDK ran exactly the vectors the model declares.
     pub fn require(&self, vectors: usize, oversized: usize) {

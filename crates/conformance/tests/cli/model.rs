@@ -406,6 +406,8 @@ pub struct Budgets {
     pub closure: Budget,
     /// Command-line check latency on the largest request.
     pub cli_latency: Budget,
+    /// Browser dispatch-to-render latency on the largest request.
+    pub browser_latency: Budget,
 }
 
 /// The measure called `definition`: its index, requirement and threshold.
@@ -453,10 +455,12 @@ fn budgets(root: &Path) -> Result<Budgets, String> {
     let guest = budget(&quality, "measureGuestSize")?;
     let closure = budget(&quality, "measureClosureSize")?;
     let cli_latency = budget(&quality, "measureCliLatency")?;
+    let browser_latency = budget(&quality, "measureBrowserLatency")?;
     for (budget, unit) in [
         (&guest, "Bytes"),
         (&closure, "Bytes"),
         (&cli_latency, "Milliseconds"),
+        (&browser_latency, "Milliseconds"),
     ] {
         if budget.unit != unit {
             return Err(format!(
@@ -469,6 +473,7 @@ fn budgets(root: &Path) -> Result<Budgets, String> {
         guest,
         closure,
         cli_latency,
+        browser_latency,
     })
 }
 
