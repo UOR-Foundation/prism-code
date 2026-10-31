@@ -1,7 +1,7 @@
 Feature: Quality budgets
 
-  The quality model gives the Core-Wasm guest, the browser closure and the
-  command-line check a threshold each (src/Quality.lex.tex). These scenarios
+  The quality model gives the Core-Wasm guest, the browser closure, the
+  command-line check and the browser check a threshold each (src/Quality.lex.tex). These scenarios
   measure what prismpm build published for the program under test, report each
   measured value beside its budget and hold it to the threshold. The measured
   values are open claims; only the comparison with the budget is asserted.
@@ -23,3 +23,9 @@ Feature: Quality budgets
     Given the program generated from the model, acceptance vector 12 and the measureCliLatency threshold
     When vector 12 is checked 11 times from standard input
     Then every run prints the modeled response, and the median time is reported and is within the threshold
+
+  @QB-04 @build
+  Scenario: The browser dispatch-to-render time of acceptance vector 12, the 4096-byte request, as the median over the repetitions prismpm verify records in application-acceptance.json, is within the millisecond threshold of measureBrowserLatency in the quality model, and a time one millisecond over that threshold is refused; the measured time is reported beside the budget and is not itself a claim.
+    Given the verification record of the program under test, acceptance vector 12 and the measureBrowserLatency threshold
+    When the browser timing recorded for vector 12 is read, and a time one millisecond over the threshold is compared
+    Then the median is reported and is within the threshold, and the larger time is refused

@@ -1,4 +1,4 @@
-//! Quality budgets (`QB-01` to `QB-03`).
+//! Quality budgets (`QB-01` to `QB-04`).
 //!
 //! `src/Quality.lex.tex` gives each performance-efficiency requirement a
 //! measure and a threshold. The build these tests run against is the one
@@ -7,6 +7,9 @@
 //! report, and compared with the threshold the model states; the measurement is
 //! an `open` claim and only the comparison is asserted.
 //!
+//! `QB-04` is read from the SDK's verification record, since the browser is run
+//! by `prismpm verify`.
+//!
 //! Budgets come from the model and nowhere else: changing a threshold in the
 //! model changes what the build is held to.
 
@@ -14,6 +17,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
+use crate::evidence;
 use crate::fixture;
 use crate::model::{self, Budget};
 use crate::program::{run, Output};
@@ -167,6 +171,16 @@ fn largest(cli: &model::Cli) -> &model::Vector {
     vector
 }
 
+/// The index of `largest` among the model's acceptance vectors, which is the
+/// index the SDK's browser timing is recorded under.
+fn largest_index(cli: &model::Cli) -> usize {
+    let vector = largest(cli);
+    cli.vectors
+        .iter()
+        .position(|candidate| std::ptr::eq(candidate, vector))
+        .expect("the largest vector is one of the model's vectors")
+}
+
 /// The median of `runs` checks of `request`, each held to the modeled response
 /// so that a fast wrong answer is not a fast check.
 fn median(program: &Path, cli: &model::Cli, vector: &model::Vector, runs: usize) -> Duration {
@@ -205,4 +219,44 @@ fn the_command_line_checks_the_largest_request_within_its_time_budget_qb_03() {
         millis,
         &format!("{}.{:03} Milliseconds", micros / 1000, micros % 1000),
     );
+}
+
+/// `QB-04`: the browser's dispatch-to-render time for the largest request is
+/// within its time budget. The SDK times it once per `prismpm verify`, which
+/// `just vv` runs once, and records the median in `application-acceptance.json`
+/// beside the engine it ran in; this test reads that record and does not run
+/// the page a second time.
+#[test]
+fn the_browser_checks_the_largest_request_within_its_time_budget_qb_04() {
+    let fixture = fixture();
+    let budgets = model::load_budgets(root());
+    let index = largest_index(&fixture.cli);
+    let timing = evidence::attestation(root(), &fixture.program).browser_timing(index);
+    let micros = timing.median_microseconds;
+    let millis = micros.div_ceil(1000);
+    report(&format!(
+        "browser {} {} dispatched vector {index} {} times, slowest {}.{:03} Milliseconds",
+        timing.engine,
+        timing.engine_version,
+        timing.repetitions,
+        timing.maximum_microseconds / 1000,
+        timing.maximum_microseconds % 1000
+    ));
+    within(
+        &budgets.browser_latency,
+        millis,
+        &format!("{}.{:03} Milliseconds", micros / 1000, micros % 1000),
+    );
+}
+
+/// `QB-04`, planted: a browser time one millisecond over the budget is refused.
+#[test]
+fn a_browser_time_over_its_budget_is_refused_qb_04() {
+    let budgets = model::load_budgets(root());
+    let over = budgets.browser_latency.threshold + 1;
+    assert!(
+        compare(&budgets.browser_latency, over).is_err(),
+        "a {over}-millisecond browser check passed its budget"
+    );
+    assert!(compare(&budgets.browser_latency, budgets.browser_latency.threshold).is_ok());
 }
