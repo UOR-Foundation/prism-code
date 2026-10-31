@@ -37,7 +37,15 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.sha }}
+      - name: diag relock lexlean
+        env:
+          SDK_IMAGE: ${{ inputs.sdk-image }}
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" --network none --volume "$PWD:/workspace" --workdir /workspace --env HOME=/tmp "$SDK_IMAGE" lexlean lock
+          echo LOCKB64 $(gzip -9c lexlean.lock | base64 -w0)
+          git diff --stat
+          exit 1
       - name: Check out the exact reviewed template policy snapshot
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
