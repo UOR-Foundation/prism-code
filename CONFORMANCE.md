@@ -51,8 +51,8 @@ model does not sanction.
 | --- | --- | --- |
 | `QB-01` | `build` | The Core-Wasm guest prismpm build publishes is no larger than the byte threshold of measureGuestSize in the quality model, and a guest one byte over that threshold is refused; the measured size is reported beside the budget and is not itself a claim. |
 | `QB-02` | `build` | The six-file browser closure prismpm build publishes is no larger in total than the byte threshold of measureClosureSize in the quality model; the measured size is reported beside the budget and is not itself a claim. |
-| `QB-03` | `build` | The median of 11 runs of dataflow-policy check on acceptance vector 12, the 4096-byte request, process start included and each run giving the modeled response, is within the millisecond threshold of measureCliLatency in the quality model; the measured time is reported beside the budget and is not itself a claim. |
-| `QB-04` | `build` | The browser dispatch-to-render time of acceptance vector 12, the 4096-byte request, as the median over the repetitions prismpm verify records in application-acceptance.json, is within the millisecond threshold of measureBrowserLatency in the quality model, and a time one millisecond over that threshold is refused; the measured time is reported beside the budget and is not itself a claim. |
+| `QB-03` | `build` | The median of 11 runs of dataflow-policy check on the largest request the page dispatches through its form, process start included and each run giving the modeled response, is within the millisecond threshold of measureCliLatency in the quality model; the measured time is reported beside the budget and is not itself a claim. |
+| `QB-04` | `build` | The browser dispatch-to-render time of the largest request the page dispatches through its form, as the median over the repetitions prismpm verify records in application-acceptance.json, is within the millisecond threshold of measureBrowserLatency in the quality model, and a time one millisecond over that threshold is refused; the measured time is reported beside the budget and is not itself a claim. |
 
 ## cli
 

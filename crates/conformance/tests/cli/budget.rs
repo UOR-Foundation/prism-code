@@ -171,14 +171,23 @@ fn largest(cli: &model::Cli) -> &model::Vector {
     vector
 }
 
-/// The index of `largest` among the model's acceptance vectors, which is the
-/// index the SDK's browser timing is recorded under.
-fn largest_index(cli: &model::Cli) -> usize {
-    let vector = largest(cli);
-    cli.vectors
+/// The index of the largest request the page dispatched and timed. The page
+/// times only what it submits through its form, so this is the largest
+/// request among the timed vectors; it is `largest` whenever the page
+/// submitted that one.
+fn largest_timed_index(cli: &model::Cli, timed: &[usize]) -> usize {
+    *timed
         .iter()
-        .position(|candidate| std::ptr::eq(candidate, vector))
-        .expect("the largest vector is one of the model's vectors")
+        .max_by_key(|&&index| {
+            cli.vectors
+                .get(index)
+                .unwrap_or_else(|| {
+                    panic!("browser_timing names vector {index}, which the model does not declare")
+                })
+                .request
+                .len()
+        })
+        .expect("prismpm verify timed no vector in the browser")
 }
 
 /// The median of `runs` checks of `request`, each held to the modeled response
@@ -221,23 +230,25 @@ fn the_command_line_checks_the_largest_request_within_its_time_budget_qb_03() {
     );
 }
 
-/// `QB-04`: the browser's dispatch-to-render time for the largest request is
-/// within its time budget. The SDK times it once per `prismpm verify`, which
-/// `just vv` runs once, and records the median in `application-acceptance.json`
-/// beside the engine it ran in; this test reads that record and does not run
-/// the page a second time.
+/// `QB-04`: the browser's dispatch-to-render time for the largest request the
+/// page dispatches is within its time budget. The SDK times it once per
+/// `prismpm verify`, which `just vv` runs once, and records the median in
+/// `application-acceptance.json` beside the engine it ran in; this test reads
+/// that record and does not run the page a second time.
 #[test]
 fn the_browser_checks_the_largest_request_within_its_time_budget_qb_04() {
     let fixture = fixture();
     let budgets = model::load_budgets(root());
-    let index = largest_index(&fixture.cli);
-    let timing = evidence::attestation(root(), &fixture.program).browser_timing(index);
+    let attestation = evidence::attestation(root(), &fixture.program);
+    let index = largest_timed_index(&fixture.cli, &attestation.browser_timed());
+    let timing = attestation.browser_timing(index);
     let micros = timing.median_microseconds;
     let millis = micros.div_ceil(1000);
     report(&format!(
-        "browser {} {} dispatched vector {index} {} times, slowest {}.{:03} Milliseconds",
+        "browser {} {} dispatched vector {index} ({} bytes) {} times, slowest {}.{:03} Milliseconds",
         timing.engine,
         timing.engine_version,
+        fixture.cli.vectors[index].request.len(),
         timing.repetitions,
         timing.maximum_microseconds / 1000,
         timing.maximum_microseconds % 1000

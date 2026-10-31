@@ -105,6 +105,28 @@ pub struct BrowserTiming {
 }
 
 impl Attestation {
+    /// The acceptance vectors `prismpm verify` timed in the browser, in
+    /// order. The page times only the vectors it dispatches through its form;
+    /// the SDK checks the rest by direct invocation and does not time them.
+    pub fn browser_timed(&self) -> Vec<usize> {
+        let name = self.path.display();
+        let mut indexes: Vec<usize> = self.document["browser_timing"]
+            .as_array()
+            .unwrap_or_else(|| panic!("{name}: no browser_timing; the SDK recorded none"))
+            .iter()
+            .map(|row| {
+                row["vector_index"]
+                    .as_u64()
+                    .and_then(|index| usize::try_from(index).ok())
+                    .unwrap_or_else(|| {
+                        panic!("{name}: browser_timing row without a vector_index: {row}")
+                    })
+            })
+            .collect();
+        indexes.sort_unstable();
+        indexes
+    }
+
     /// The browser timing `prismpm verify` recorded for acceptance vector
     /// `index`. A record without it is a failure: the budget it serves would
     /// otherwise be held to nothing.
