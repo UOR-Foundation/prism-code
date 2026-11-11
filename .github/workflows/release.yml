@@ -42,12 +42,12 @@ jobs:
           fi
           printf 'image=%s\n' "$image" >> "$GITHUB_OUTPUT"
       - name: Fetch the locked SDK
-        uses: UOR-Foundation/PrismPM/action@e84124f0fed01510843772ae11d8a3068cef47ea # prismpm-action-input
+        uses: UOR-Foundation/PrismPM/action@b48ee2ffa4d2097685054dc350b57aa204fc7080 # prismpm-action-input
         with:
           command: fetch
           sdk-image: ${{ steps.sdk.outputs.image }}
       - name: Build the release
-        uses: UOR-Foundation/PrismPM/action@e84124f0fed01510843772ae11d8a3068cef47ea # prismpm-action-input
+        uses: UOR-Foundation/PrismPM/action@b48ee2ffa4d2097685054dc350b57aa204fc7080 # prismpm-action-input
         with:
           command: build
           reference: ghcr.io/uor-foundation/dataflow-policy:${{ github.ref_name }}
