@@ -407,7 +407,13 @@ fn dependency_updates_are_confined(source: &str) -> bool {
                     "directory": "/",
                     "schedule": {"interval": "weekly"},
                     "groups": {"build-policy": {"patterns": ["*"]}},
-                    "commit-message": {"prefix": "chore(deps)"}
+                    "commit-message": {"prefix": "chore(deps)"},
+                    // The SDK regenerates offline from its own crate set; these
+                    // releases are outside it (UOR-Foundation/PrismPM#430).
+                    "ignore": [
+                        {"dependency-name": "sha2", "versions": [">=0.11"]},
+                        {"dependency-name": "toml", "versions": [">=0.9"]}
+                    ]
                 }
             ]
         })

@@ -37,6 +37,20 @@
           ]
         }
       },
+      "ignore": [
+        {
+          "dependency-name": "sha2",
+          "versions": [
+            ">=0.11"
+          ]
+        },
+        {
+          "dependency-name": "toml",
+          "versions": [
+            ">=0.9"
+          ]
+        }
+      ],
       "package-ecosystem": "cargo",
       "schedule": {
         "interval": "weekly"
